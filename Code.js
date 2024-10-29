@@ -7,9 +7,8 @@ const EMAIL_SEARCH_PREVIOUS_DAYS = 1; // !!! shoulde be `1` by default
 const EMAIL_SEARCH_RESULT_LIMIT = undefined; // !!! should be `undefined` by default for limitless
 
 const EMAIL_RECIPIENT = Session.getActiveUser().getEmail();
-const EMAIL_SUBJECT = `Daily Email Summary for ${new Date().toISOString().split('T')[0]}`;
-const EMAIL_BODY_TEMPLATE = `Hello,<br><br>Here is your summary of yesterday's emails:<br><br>{formattedSummary}<br><br>Regards,<br>Your Automation Script`;
-const EMAIL_MAX_CONTENT_LENGTH = 500;
+const EMAIL_SUBJECT = `📝 Daily Email Summary for ${new Date().toISOString().split('T')[0]}`;
+const EMAIL_MAX_CONTENT_LENGTH = 1000;
 const EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE = ["personal"];
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
@@ -94,7 +93,11 @@ function summarizeEmails(emails) {
   let summaries = [];
 
   emails.forEach(email => {
-    const categoryList = EMAIL_CATEGORIES.map(cat => `- ${cat.name} (${cat.emoji}): ${cat.description}`).join('\n');
+    // Convert EMAIL_CATEGORIES to YAML format
+    const categoryList = EMAIL_CATEGORIES.map(cat =>
+      `  - name: ${cat.name}\n    emoji: ${cat.emoji}\n    description: ${cat.description}`
+    ).join('\n');
+
     const payload = {
       model: OPENAI_MODEL,
       messages: [
@@ -103,14 +106,17 @@ function summarizeEmails(emails) {
           content:
             `
             Summarize the following email, categorize it, and determine if there's any action item for the recipient:
-              Subject: ${email.subject}
-              Content: ${email.content}
-              Category List: 
+              subject: ${email.subject}
+              content: ${email.content}
+              category-list: 
+                \`\`\`yaml
                 ${categoryList}
+                \`\`\`
             Guidelines:
+              - category should be decided based on the content of the email and "category-list.description"
+              - category should be one of the categories listed in the "category-list.name"
               - summary should be very concise and can be just phrases
-              - summary should have the emoji of the category at the beginning
-              - category should be one of the categories above without the emoji
+              - summary should have the "category-list.emoji" of the "category-list.name" at the beginning
               - note that user is already familiar with types of emails they receive
               - for actionItem:
                 - Only highlight action items if they're essential or time-sensitive:
@@ -120,8 +126,8 @@ function summarizeEmails(emails) {
                 - Skip optional or informational items (e.g., general marketing, social media updates).
                 - If reading the summary is enough, no action item is needed.
             Output should be in the following format:
-              summary: <category emoji> <short summary>
-              category: <category>
+              category: <category-list.name>
+              summary: <category-list.emoji> <short summary>
               actionItem: <only if there's a valid action item based on guidelines above; otherwise "None">
             `
         }
@@ -143,12 +149,22 @@ function summarizeEmails(emails) {
       const json = JSON.parse(response.getContentText());
       console.log("llm: ", JSON.stringify(json, undefined, 2));
       const summaryText = json.choices[0].message.content.split('\n');
-      const summary = {
+
+      let summary = {
         ...email,
         summary: summaryText.find(line => line.startsWith("summary:")).replace("summary: ", "").trim(),
         category: summaryText.find(line => line.startsWith("category:")).replace("category: ", "").trim(),
         actionItem: summaryText.find(line => line.startsWith("actionItem:")).replace("actionItem: ", "").trim(),
       };
+
+      // Validate the emoji in the summary
+      const emoji = summary.summary.split(' ')[0];
+      const validEmojis = EMAIL_CATEGORIES.map(cat => cat.emoji);
+      if (!validEmojis.includes(emoji)) {
+        console.warn(`Invalid emoji detected in summary: ${summary.summary}. Expected one of: ${validEmojis.join(', ')}`);
+        summary.summary = `⚠️ Invalid emoji detected. Please review.`;
+      }
+
       summaries.push(summary);
     } catch (error) {
       console.error(`Failed to summarize email: ${email.subject}. Error: ${error}`);
@@ -169,20 +185,52 @@ function summarizeEmails(emails) {
 
   return summaries;
 }
+
 function formatSummariesAsHTML(summaries) {
-  let html = "<table border='1' style='border-collapse:collapse;width:100%'><tr><th>Summary</th><th>From</th><th>Link</th><th>Action Item</th></tr>";
+  let html = `
+    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;'>
+      <div style='background-color: #f4f4f4; padding: 20px; text-align: center;'>
+        <h2 style='margin: 0; color: #333;'>Daily Email Summary</h2>
+      </div>
+      <div style='padding: 20px;'>
+        <p>Hello,</p>
+        <p>Here is your summary of yesterday's emails:</p>
+        <table style='width: 100%; border-collapse: collapse;'>
+          <tbody>`;
 
   summaries.forEach(summary => {
-    html += `<tr><td>${summary.summary}</td><td>${summary.from}</td><td><a href="${summary.link}">View Email</a></td><td>${summary.actionItem}</td></tr>`;
+    html += `
+            <tr style='border-bottom: 1px solid #eee;'>
+              <td style='padding: 10px 0;'>
+                <div style='font-size: 16px; font-weight: bold;'>${summary.summary}</div>
+                <div style='color: #666; font-size: 14px;'>From: ${summary.from} | Category: ${summary.category}</div>`;
+
+    if (summary.actionItem && summary.actionItem.toLowerCase() !== 'none') {
+      html += `<div style='background: #fff3cd; padding: 8px; border-radius: 4px; margin-top: 8px;'>
+                <span style='font-size: 18px;'>⚠️</span> ${summary.actionItem}
+              </div>`;
+    }
+
+    html += `<div style='font-size: 13px; margin-top: 8px;'>
+                <a href="${summary.link}" style='color: #0066cc; text-decoration: none;'>View Original Email →</a>
+              </div>
+              </td>
+            </tr>`;
   });
 
-  html += "</table>";
-
-  // Add category legend with predefined categories and emojis
-  html += "<br><br><strong>Categories:</strong><br>";
+  html += `
+          </tbody>
+        </table>
+        <div style='margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;'>
+          <strong>Categories:</strong><br>`;
   EMAIL_CATEGORIES.forEach(category => {
-    html += `${category.emoji} ${category.name} - ${category.description}<br>`;
+    html += `<div style='margin: 8px 0;'>${category.emoji} ${category.name} - ${category.description}</div>`;
   });
+  html += `
+        </div>
+        <p style='margin-top: 40px;'>Regards,<br>Your Automation Script</p>
+      </div>
+    </div>`;
 
   return html;
 }
@@ -192,11 +240,10 @@ function sendSummaryEmail(formattedSummary) {
     return;
   }
 
-  const body = EMAIL_BODY_TEMPLATE.replace("{formattedSummary}", formattedSummary);
   const data = {
     to: EMAIL_RECIPIENT,
     subject: EMAIL_SUBJECT,
-    htmlBody: body
+    htmlBody: formattedSummary
   };
 
   MailApp.sendEmail(data);
