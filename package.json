@@ -1,0 +1,14 @@
+{
+  "name": "email-summary",
+  "version": "1.0.0",
+  "main": "Code.js",
+  "scripts": {
+    "setup": "clasp login && clasp login --creds credentials.json",
+    "start": "clasp push && clasp run summarizeAndSendDailyEmail",
+    "deploy": "clasp push && clasp deploy",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "description": ""
+}
