@@ -6,7 +6,8 @@
     "setup": "clasp login --creds credentials.json",
     "start": "clasp run summarizeAndSendDailyEmail",
     "test": "clasp push --force && clasp deploy && clasp run summarizeAndSendDailyEmail",
-    "watch": "clasp logs --open",
+    "watch": "clasp logs --watch",
+    "watch:open": "clasp logs --open",
     "deploy": "clasp push --force && clasp deploy"
   },
   "author": "",
