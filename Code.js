@@ -17,13 +17,25 @@ const OPENAI_API_KEY = PropertiesService.getScriptProperties().getProperty("OPEN
 const OPENAI_MODEL = "gpt-4o-mini";
 const OPENAI_MAX_TOKENS = 1000;
 
+const EMAIL_CATEGORIES = [
+  { name: "marketing", emoji: "📢", description: "Promotional content, ads, special offers" },
+  { name: "personal", emoji: "👥", description: "Messages from family, friends, personal contacts" },
+  { name: "social-media", emoji: "📱", description: "Notifications from social platforms" },
+  { name: "transactions", emoji: "💳", description: "Purchase receipts, orders, subscriptions" },
+  { name: "jobs", emoji: "💼", description: "Job postings, recruiter emails" },
+  { name: "spam", emoji: "🚫", description: "Unwanted or junk emails" },
+  { name: "newsletter", emoji: "📰", description: "Subscriptions to newsletters and blogs" },
+  { name: "support", emoji: "🛟", description: "Customer service and helpdesk communications" },
+  { name: "notifications", emoji: "🔔", description: "System notifications and alerts" }
+];
+
 function summarizeAndSendDailyEmail() {
   try {
-  const previousDayEmails = getPreviousDayEmails();
-  const emailSummaries = summarizeEmails(previousDayEmails);
-  const formattedSummary = formatSummariesAsHTML(emailSummaries);
-  sendSummaryEmail(formattedSummary);
-  archiveThreads(emailSummaries);
+    const previousDayEmails = getPreviousDayEmails();
+    const emailSummaries = summarizeEmails(previousDayEmails);
+    const formattedSummary = formatSummariesAsHTML(emailSummaries);
+    sendSummaryEmail(formattedSummary);
+    archiveThreads(emailSummaries);
     return { success: true, message: "Email summary processed successfully" };
   } catch (error) {
     console.error("Error in summarizeAndSendDailyEmail:", error);
@@ -82,6 +94,7 @@ function summarizeEmails(emails) {
   let summaries = [];
 
   emails.forEach(email => {
+    const categoryList = EMAIL_CATEGORIES.map(cat => `- ${cat.name} (${cat.emoji}): ${cat.description}`).join('\n');
     const payload = {
       model: OPENAI_MODEL,
       messages: [
@@ -93,17 +106,11 @@ function summarizeEmails(emails) {
               Subject: ${email.subject}
               Content: ${email.content}
               Category List: 
-                - marketing: Emails related to promotional content, ads, special offers, or marketing campaigns.
-                - personal: Messages from family, friends, or personal contacts.
-                - social-media: Notifications and updates from social media platforms like Facebook, Instagram, etc.
-                - transactions: Purchase receipts, orders, subscriptions, and payment-related emails.
-                - jobs: Job postings, recruiter emails, and curated job matches.
-                - spam: Unwanted or junk emails that are often promotional or unsolicited.
-                - newsletter: Subscriptions to newsletters, blogs, and regular informational updates.
-                - support: Customer service inquiries, support requests, and helpdesk communications.
-                - notifications: System notifications, alerts, and updates from apps or services.
+                ${categoryList}
             Guidelines:
               - summary should be very concise and can be just phrases
+              - summary should have the emoji of the category at the beginning
+              - category should be one of the categories above without the emoji
               - note that user is already familiar with types of emails they receive
               - for actionItem:
                 - Only highlight action items if they're essential or time-sensitive:
@@ -113,7 +120,7 @@ function summarizeEmails(emails) {
                 - Skip optional or informational items (e.g., general marketing, social media updates).
                 - If reading the summary is enough, no action item is needed.
             Output should be in the following format:
-              summary: <short summary>
+              summary: <category emoji> <short summary>
               category: <category>
               actionItem: <only if there's a valid action item based on guidelines above; otherwise "None">
             `
@@ -162,15 +169,21 @@ function summarizeEmails(emails) {
 
   return summaries;
 }
-
 function formatSummariesAsHTML(summaries) {
-  let html = "<table border='1' style='border-collapse:collapse;width:100%'><tr><th>Summary</th><th>Category</th><th>From</th><th>Link</th><th>Action Item</th></tr>";
+  let html = "<table border='1' style='border-collapse:collapse;width:100%'><tr><th>Summary</th><th>From</th><th>Link</th><th>Action Item</th></tr>";
 
   summaries.forEach(summary => {
-    html += `<tr><td>${summary.summary}</td><td>${summary.category}</td><td>${summary.from}</td><td><a href="${summary.link}">View Email</a></td><td>${summary.actionItem}</td></tr>`;
+    html += `<tr><td>${summary.summary}</td><td>${summary.from}</td><td><a href="${summary.link}">View Email</a></td><td>${summary.actionItem}</td></tr>`;
   });
 
   html += "</table>";
+
+  // Add category legend with predefined categories and emojis
+  html += "<br><br><strong>Categories:</strong><br>";
+  EMAIL_CATEGORIES.forEach(category => {
+    html += `${category.emoji} ${category.name} - ${category.description}<br>`;
+  });
+
   return html;
 }
 
