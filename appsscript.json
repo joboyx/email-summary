@@ -10,9 +10,13 @@
     ]
   },
   "exceptionLogging": "STACKDRIVER",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/gmail.modify",
+    "https://www.googleapis.com/auth/script.external_request"
+  ],
   "runtimeVersion": "V8",
-  "webapp": {
-    "executeAs": "USER_DEPLOYING",
+  "executionApi": {
     "access": "MYSELF"
   }
 }
