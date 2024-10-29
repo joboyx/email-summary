@@ -18,11 +18,17 @@ const OPENAI_MODEL = "gpt-4o-mini";
 const OPENAI_MAX_TOKENS = 1000;
 
 function summarizeAndSendDailyEmail() {
+  try {
   const previousDayEmails = getPreviousDayEmails();
   const emailSummaries = summarizeEmails(previousDayEmails);
   const formattedSummary = formatSummariesAsHTML(emailSummaries);
   sendSummaryEmail(formattedSummary);
   archiveThreads(emailSummaries);
+    return { success: true, message: "Email summary processed successfully" };
+  } catch (error) {
+    console.error("Error in summarizeAndSendDailyEmail:", error);
+    return { success: false, message: error.message };
+  }
 }
 
 function getSearchStringForLastNDays(n) {
@@ -51,15 +57,9 @@ function getPreviousDayEmails() {
   let emails = [];
 
   threads = threads.slice(0, EMAIL_SEARCH_RESULT_LIMIT);
-  // threads.sort((a, b) => {
-  //   return a.getLastMessageDate() - b.getLastMessageDate();
-  // });
 
   for (const thread of threads) {
     const messages = thread.getMessages();
-    // messages.sort((a, b) => {
-    //   return a.getDate() - b.getDate();
-    // })
     messages.forEach(message => {
       const email = {
         threadId: thread.getId(),

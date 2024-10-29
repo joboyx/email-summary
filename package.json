@@ -4,9 +4,9 @@
   "main": "Code.js",
   "scripts": {
     "setup": "clasp login && clasp login --creds credentials.json",
-    "start": "clasp push && clasp deploy && clasp run summarizeAndSendDailyEmail",
+    "start": "clasp push --force && clasp deploy && clasp run summarizeAndSendDailyEmail",
     "watch": "clasp logs --open",
-    "deploy": "clasp push && clasp deploy"
+    "deploy": "clasp push --force && clasp deploy"
   },
   "author": "",
   "license": "UNLICENSED",
