@@ -8,7 +8,7 @@
     "test": "clasp push --force && clasp deploy && clasp run summarizeAndSendDailyEmail",
     "watch": "clasp logs --watch",
     "watch:open": "clasp logs --open",
-    "deploy": "clasp push --force && clasp deploy && echo 'Deployed successfully! Delete the old trigger and create a new one with this new version.' && echo 'https://script.google.com/home/projects/18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0/edit'",
+    "deploy": "clasp push --force && clasp deploy && echo 'Deployed successfully! Delete the old trigger and create a new one with this new version.' && echo 'https://script.google.com/home/projects/18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0/edit'"
   },
   "author": "",
   "license": "UNLICENSED",

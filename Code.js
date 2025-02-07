@@ -13,7 +13,7 @@ const EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE = ["personal"];
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_API_KEY = PropertiesService.getScriptProperties().getProperty("OPENAI_API_KEY");
-const OPENAI_MODEL = "gpt-4o-mini";
+const OPENAI_MODEL = "gpt-4o";
 const OPENAI_MAX_TOKENS = 1000;
 
 const EMAIL_CATEGORIES = [
