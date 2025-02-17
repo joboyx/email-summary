@@ -3,13 +3,16 @@
  */
 const EMAIL_SEND_ENABLED = true; // !!! should be `true` by default
 const EMAIL_ARCHIVE_ENABLED = true; // !!! should be `true` by default
+const EMAIL_LABEL_ENABLED = true; // !!! should be `true` by default
 const EMAIL_SEARCH_PREVIOUS_DAYS = 1; // !!! shoulde be `1` by default
-const EMAIL_SEARCH_RESULT_LIMIT = undefined; // !!! should be `undefined` by default for limitless
+const EMAIL_SEARCH_RESULT_LIMIT = undefined; // !!! should be `undefined` by default for limitless, otherwise set to a number
 
 const EMAIL_RECIPIENT = Session.getActiveUser().getEmail();
 const EMAIL_SUBJECT = `📝 Daily Email Summary for ${new Date().toISOString().split('T')[0]}`;
 const EMAIL_MAX_CONTENT_LENGTH = 1000;
 const EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE = ["personal"];
+const EMAIL_LABEL_ROOT = "🤖 EmailSummary";
+const EMAIL_LABEL_ACTION_REQUIRED = `${EMAIL_LABEL_ROOT}/⚠️ ActionRequired`;
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_API_KEY = PropertiesService.getScriptProperties().getProperty("OPENAI_API_KEY");
@@ -35,6 +38,7 @@ function summarizeAndSendDailyEmail() {
     const formattedSummary = formatSummariesAsHTML(emailSummaries);
     sendSummaryEmail(formattedSummary);
     archiveThreads(emailSummaries);
+    addLabels(emailSummaries);
     return { success: true, message: "Email summary processed successfully" };
   } catch (error) {
     console.error("Error in summarizeAndSendDailyEmail:", error);
@@ -65,7 +69,7 @@ function getPreviousDayEmails() {
   const searchString = `in:inbox ${getSearchStringForLastNDays(EMAIL_SEARCH_PREVIOUS_DAYS)} -subject:"${EMAIL_SUBJECT.split(' for')[0]}"`;
   console.log("searchString: ", searchString);
   let threads = GmailApp.search(searchString);
-  let emails = [];
+  const emails = [];
 
   threads = threads.slice(0, EMAIL_SEARCH_RESULT_LIMIT);
 
@@ -90,7 +94,7 @@ function getPreviousDayEmails() {
 }
 
 function summarizeEmails(emails) {
-  let summaries = [];
+  const summaries = [];
 
   emails.forEach(email => {
     // Convert EMAIL_CATEGORIES to YAML format
@@ -133,6 +137,7 @@ function summarizeEmails(emails) {
         }
       ],
       max_tokens: OPENAI_MAX_TOKENS,
+      temperature: 0.0,
     };
 
     const options = {
@@ -150,7 +155,7 @@ function summarizeEmails(emails) {
       console.log("llm: ", JSON.stringify(json, undefined, 2));
       const summaryText = json.choices[0].message.content.split('\n');
 
-      let summary = {
+      const summary = {
         ...email,
         summary: summaryText.find(line => line.startsWith("summary:")).replace("summary: ", "").trim(),
         category: summaryText.find(line => line.startsWith("category:")).replace("category: ", "").trim(),
@@ -256,14 +261,66 @@ function archiveThreads(emails) {
 
   for (const email of emails) {
     const isCategoryForArchive = !EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE.includes(email.category);
-    const hasActionItem = email.actionItem && email.actionItem.toLowerCase() !== 'none'
 
-    if (isCategoryForArchive && !hasActionItem) {
+    if (isCategoryForArchive) {
       const thread = GmailApp.getThreadById(email.threadId);
       GmailApp.moveThreadToArchive(thread);
-      console.log(`Moved to Archive: threadId[${email.threadId}] messageId[${email.messageId}] link[${email.link}] subject[${email.subject}] category[${email.category}] actionItem[${email.actionItem}]`);
+      console.log(`Moved to Archive: ${explainEmail(email)}`);
     } else {
-      console.log(`Skipped Archive: threadId[${email.threadId}] messageId[${email.messageId}] link[${email.link}] subject[${email.subject}] category[${email.category}] actionItem[${email.actionItem}]`);
+      console.log(`Skipped Archive: ${explainEmail(email)}`);
     }
   }
+}
+
+function addLabels(emails) {
+  if (!EMAIL_LABEL_ENABLED) {
+    return;
+  }
+
+  for (const email of emails) {
+    const thread = GmailApp.getThreadById(email.threadId);
+    const hasActionItem = email.actionItem && email.actionItem.toLowerCase() !== 'none';
+    if (hasActionItem) {
+      thread.addLabel(getOrCreateLabel(EMAIL_LABEL_ACTION_REQUIRED));
+      console.log(`Added label: ${EMAIL_LABEL_ACTION_REQUIRED} to email: ${explainEmail(email)}`);
+    }
+  }
+}
+
+const labelCache = {};
+/**
+ * Get or create a label. Supported nested labels.
+ * Auto-creates labels in every level
+ */
+function getOrCreateLabel(labelName) {
+  if (labelCache[labelName]) {
+    console.log("Label found in cache: " + labelName);
+    return labelCache[labelName];
+  }
+
+  const labelParts = labelName.split('/');
+  let currentLabelPath = '';
+
+  for (const part of labelParts) {
+    currentLabelPath = currentLabelPath ? `${currentLabelPath}/${part}` : part;
+    let label = GmailApp.getUserLabelByName(currentLabelPath);
+
+    if (!label) {
+      console.log("Label not found. Creating: " + currentLabelPath);
+      label = GmailApp.createLabel(currentLabelPath);
+    } else {
+      console.log("Label exists: " + label.getName());
+    }
+
+    labelCache[currentLabelPath] = label;
+  }
+
+  return labelCache[labelName];
+}
+
+/**
+ * Explain the email in a human-readable format
+ */
+function explainEmail(email) {
+  return `threadId[${email.threadId}] messageId[${email.messageId}] link[${email.link}] subject[${email.subject}] category[${email.category}] actionItem[${email.actionItem}]`;
 }
