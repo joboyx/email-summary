@@ -16,7 +16,7 @@ const EMAIL_LABEL_ACTION_REQUIRED = `${EMAIL_LABEL_ROOT}/⚠️ ActionRequired`;
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_API_KEY = PropertiesService.getScriptProperties().getProperty("OPENAI_API_KEY");
-const OPENAI_MODEL = "gpt-4o";
+const OPENAI_MODEL = "gpt-5";
 const OPENAI_MAX_TOKENS = 1000;
 
 const EMAIL_CATEGORIES = [
