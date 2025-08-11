@@ -137,7 +137,6 @@ function summarizeEmails(emails) {
         }
       ],
       max_completion_tokens: OPENAI_MAX_TOKENS,
-      temperature: 0.0,
     };
 
     const options = {
