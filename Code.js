@@ -17,7 +17,7 @@ const EMAIL_LABEL_ACTION_REQUIRED = `${EMAIL_LABEL_ROOT}/⚠️ ActionRequired`;
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_API_KEY = PropertiesService.getScriptProperties().getProperty("OPENAI_API_KEY");
 const OPENAI_MODEL = "gpt-5";
-const OPENAI_MAX_TOKENS = 1000;
+const OPENAI_MAX_TOKENS = 10000;
 
 const EMAIL_CATEGORIES = [
   { name: "marketing", emoji: "📢", description: "Promotional content, ads, special offers" },
@@ -136,7 +136,7 @@ function summarizeEmails(emails) {
             `
         }
       ],
-      max_tokens: OPENAI_MAX_TOKENS,
+      max_completion_tokens: OPENAI_MAX_TOKENS,
       temperature: 0.0,
     };
 
