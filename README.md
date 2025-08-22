@@ -22,10 +22,6 @@ To set up the project, follow these steps:
      nvm install
      nvm use
      ```
-   - Install [clasp](https://github.com/google/clasp) globally:
-     ```bash
-     npm install -g @google/clasp
-     ```
 
 3. Set up configuration files:
 

@@ -18,5 +18,8 @@
   },
   "author": "",
   "license": "UNLICENSED",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "@google/clasp": "^2.4.2"
+  }
 }
