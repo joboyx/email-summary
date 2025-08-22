@@ -223,9 +223,10 @@ function formatSummariesAsHTML(summaries) {
   summaries.forEach(summary => {
     html += `
             <tr style='border-bottom: 1px solid #eee;'>
-              <td style='padding: 10px 0;'>
-                <div style='font-size: 16px; font-weight: bold;'>${summary.summary}</div>
-                <div style='color: #666; font-size: 14px;'>From: ${summary.from} | Category: ${summary.category}</div>`;
+              <td style='padding: 15px 0;'>
+                <div style='font-size: 16px; font-weight: bold; margin-bottom: 8px;'>${summary.summary}</div>
+                <div style='color: #666; font-size: 15px; margin-bottom: 4px;'><strong>Subject:</strong> ${summary.subject}</div>
+                <div style='color: #666; font-size: 15px;'><strong>From:</strong> ${summary.from} | <strong>Category:</strong> ${summary.category}</div>`;
 
     if (summary.actionItem && summary.actionItem.toLowerCase() !== 'none') {
       html += `<div style='background: #fff3cd; padding: 8px; border-radius: 4px; margin-top: 8px;'>
