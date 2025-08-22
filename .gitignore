@@ -2,3 +2,5 @@
 .clasp.json
 .clasprc.json
 credentials.json
+
+node_modules/
