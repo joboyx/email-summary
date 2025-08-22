@@ -1,0 +1,35 @@
+{
+  "name": "Google Apps Script Email Summary",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true,
+      "username": "vscode",
+      "userUid": "automatic",
+      "userGid": "automatic"
+    }
+  },
+  "onCreateCommand": "npm install -g @google/clasp",
+  "postCreateCommand": "npm install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-json",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+      }
+    }
+  },
+  "forwardPorts": [],
+  "remoteUser": "vscode",
+  "mounts": [
+    "source=${localWorkspaceFolder}/credentials.json,target=/workspaces/${localWorkspaceFolderBasename}/credentials.json,type=bind,consistency=cached"
+  ]
+}
