@@ -86,6 +86,50 @@ To open the logs in a browser, use:
 npm run watch:open
 ```
 
+## Deployment Process
+
+After making local changes and testing, follow these steps to deploy to production:
+
+### Pre-deployment Checklist
+- Ensure all debug configuration values in `Code.js` are set to their default production values:
+  - `EMAIL_SEND_ENABLED = true`
+  - `EMAIL_ARCHIVE_ENABLED = true` 
+  - `EMAIL_LABEL_ENABLED = true`
+  - `EMAIL_SEARCH_PREVIOUS_DAYS = 1`
+  - `EMAIL_SEARCH_RESULT_LIMIT = undefined`
+
+### Deployment Steps
+
+1. **Deploy the script:**
+   ```bash
+   npm run deploy
+   ```
+   
+2. **Update the trigger:** 
+   - Copy the Google Apps Script URL from the deploy output
+   - Open the URL and update/recreate the time-based trigger for the new deployment
+
+3. **Update deployment tracking:**
+   - Note the deployment ID from the deploy command output
+   - Update `package.json` → `meta.activeDeploymentId` with the new deployment number
+
+4. **Clean up old deployments:**
+   ```bash
+   npm run deployments:list
+   npm run deployments:cleanup
+   ```
+
+5. **Commit changes:**
+   Since `package.json` was updated with the new deployment ID, commit and push the changes to track the active deployment.
+
+### Quick Deployment Command
+Use the custom Claude command for streamlined deployment:
+```bash
+project:deploy
+```
+
+This command automates the entire deployment process including configuration validation, deployment, cleanup, and git operations.
+
 ## References
 
 - For more information on `clasp`, visit the [clasp GitHub repository](https://github.com/google/clasp).
