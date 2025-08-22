@@ -59,6 +59,7 @@ To set up the project, follow these steps:
    - Select `Time-driven` from the `Event source` dropdown
    - Select `Day timer` from the `Type of time` dropdown
    - Select `5 to 6am` from the `Time of day` dropdown
+   - Select `Notify me immediately` from the `Failure notification settings` dropdown
 
 ## Usage
 
