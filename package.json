@@ -13,7 +13,7 @@
     "deployments:cleanup": "(clasp deployments | grep -v @$(cat package.json | jq .meta.activeDeploymentId) | grep -v @HEAD | grep \"\\- \" | cut -d' ' -f2 | xargs -I {} clasp undeploy {}) && clasp deployments"
   },
   "meta": {
-    "_activeDeploymentId": "NOTE: this needs to be updated everytime we update the trigger to a specific deployment",
+    "_activeDeploymentId": "NOTE: this needs to be updated every time we update the trigger to a specific deployment",
     "activeDeploymentId": 64
   },
   "author": "",

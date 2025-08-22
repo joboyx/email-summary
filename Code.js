@@ -9,7 +9,7 @@ const EMAIL_SEARCH_RESULT_LIMIT = undefined; // !!! should be `undefined` by def
 
 const EMAIL_RECIPIENT = Session.getActiveUser().getEmail();
 const EMAIL_SUBJECT = `📝 Daily Email Summary for ${new Date().toISOString().split('T')[0]}`;
-const EMAIL_MAX_CONTENT_LENGTH = 1000;
+const EMAIL_MAX_CONTENT_LENGTH = 500000;
 const EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE = ["personal"];
 const EMAIL_LABEL_ROOT = "🤖 EmailSummary";
 const EMAIL_LABEL_ACTION_REQUIRED = `${EMAIL_LABEL_ROOT}/⚠️ ActionRequired`;
@@ -17,7 +17,7 @@ const EMAIL_LABEL_ACTION_REQUIRED = `${EMAIL_LABEL_ROOT}/⚠️ ActionRequired`;
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_API_KEY = PropertiesService.getScriptProperties().getProperty("OPENAI_API_KEY");
 const OPENAI_MODEL = "gpt-5";
-const OPENAI_MAX_TOKENS = 10000;
+const OPENAI_MAX_TOKENS = 50000;
 
 const EMAIL_CATEGORIES = [
   { name: "marketing", emoji: "📢", description: "Promotional content, ads, special offers" },
@@ -73,9 +73,22 @@ function getPreviousDayEmails() {
 
   threads = threads.slice(0, EMAIL_SEARCH_RESULT_LIMIT);
 
+  // Calculate the same date threshold used in Gmail search
+  const today = new Date();
+  const nDaysAgo = new Date(today);
+  nDaysAgo.setDate(today.getDate() - EMAIL_SEARCH_PREVIOUS_DAYS);
+  // Set to start of day to match Gmail's after: behavior
+  nDaysAgo.setHours(0, 0, 0, 0);
+
   for (const thread of threads) {
     const messages = thread.getMessages();
-    messages.forEach(message => {
+    
+    // Filter messages using the same date criteria as Gmail search
+    const recentMessages = messages.filter(message => {
+      return message.getDate() >= nDaysAgo;
+    });
+    
+    recentMessages.forEach(message => {
       const email = {
         threadId: thread.getId(),
         messageId: message.getId(),
@@ -111,12 +124,17 @@ function summarizeEmails(emails) {
             `
             Summarize the following email, categorize it, and determine if there's any action item for the recipient:
               subject: ${email.subject}
+              from: ${email.from}
               content: ${email.content}
               category-list: 
                 \`\`\`yaml
                 ${categoryList}
                 \`\`\`
             Guidelines:
+              - Content Focus (for emails with quoted/replied content):
+                - This email may contain quoted/replied content from previous messages in the thread
+                - Focus ONLY on the NEW message from the sender, NOT the quoted/replied portions
+                - If this appears to be a reply, summarize what the sender is responding with, not the original message
               - category should be decided based on the content of the email and "category-list.description"
               - category should be one of the categories listed in the "category-list.name"
               - summary should be very concise and can be just phrases
