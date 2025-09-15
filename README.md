@@ -4,6 +4,33 @@
 
 This project is a Google Apps Script that summarizes daily emails and sends a summary to the user's email. It categorizes emails, highlights action items, and archives threads based on predefined rules.
 
+## Documentation
+
+Comprehensive documentation is available in the [`docs/`](./docs/) directory:
+
+### User Documentation
+- **[User Manual](docs/USER_MANUAL.md)** - How to use the system and understand email summaries
+- **[Configuration Guide](docs/CONFIGURATION.md)** - Setup and configuration options
+- **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+
+### Developer Documentation
+- **[Architecture](docs/ARCHITECTURE.md)** - System design and data flow
+- **[API Reference](docs/API_REFERENCE.md)** - Functions, data structures, and external APIs
+- **[Requirements](docs/REQUIREMENTS.md)** - Functional and non-functional specifications
+- **[Development Guide](docs/DEVELOPMENT.md)** - Setup, testing, and debugging
+- **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment procedures
+
+### Project Management
+- **[Contributing Guide](docs/CONTRIBUTING.md)** - Development standards and contribution process
+- **[Security Guide](docs/SECURITY.md)** - Security practices and data privacy
+- **[Changelog](docs/CHANGELOG.md)** - Version history and release notes
+- **[Migration Guide](docs/MIGRATION.md)** - Upgrade procedures between versions
+
+### Quick Start
+- For users: Start with the [User Manual](docs/USER_MANUAL.md)
+- For developers: Begin with the [Development Guide](docs/DEVELOPMENT.md)
+- For deployment: Follow the [Deployment Guide](docs/DEPLOYMENT.md)
+
 ## Installation
 
 To set up the project, follow these steps:
