@@ -156,7 +156,7 @@ The Email Summary system is a Google Apps Script application that automatically 
 ### Error Recovery
 - **Graceful Degradation**: Continue processing other emails on individual failures
 - **Logging**: Comprehensive error logging for debugging
-- **Retry Logic**: Automatic retries for transient failures
+- **Retries**: Not currently implemented; failed summaries are logged and skipped
 - **Fallback Behavior**: Default values for missing data
 
 ## Performance Considerations

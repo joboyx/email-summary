@@ -126,7 +126,7 @@ const EMAIL_LABEL_ENABLED = false; // Testing/debugging
 **Type:** `number`
 **Default:** `1`
 **Description:** Number of days to look back for emails
-**Valid Range:** 1-30
+**Suggested Range:** 1-30 (not enforced by code)
 **Usage:**
 ```javascript
 const EMAIL_SEARCH_PREVIOUS_DAYS = 1; // Yesterday only
