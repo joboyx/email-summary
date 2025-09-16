@@ -151,12 +151,13 @@ After making local changes and testing, follow these steps to deploy to producti
    Since `package.json` was updated with the new deployment ID, commit and push the changes to track the active deployment.
 
 ### Quick Deployment Command
-Use the custom Claude command for streamlined deployment:
+The Claude Code CLI bundles an automated deployment helper. Launch the CLI and run the command:
 ```bash
-project:deploy
+claude
+claude> /project:deploy
 ```
 
-This command automates the entire deployment process including configuration validation, deployment, cleanup, and git operations.
+This runs the scripted flow described in [the deployment helper](.claude/commands/project/deploy.md). If you prefer to execute each step manually, follow the procedures documented in the [Deployment Guide](docs/DEPLOYMENT.md).
 
 ## References
 

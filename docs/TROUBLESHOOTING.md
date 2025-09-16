@@ -524,8 +524,8 @@ console.log("Skipped categories:", EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE);
 function validateConfiguration() {
   const issues = [];
 
-  if (!EMAIL_SEND_ENABLED && process.env.NODE_ENV === 'production') {
-    issues.push("EMAIL_SEND_ENABLED should be true in production");
+  if (!EMAIL_SEND_ENABLED) {
+    issues.push("EMAIL_SEND_ENABLED is false. Enable it before deploying to production unless you are intentionally running in debug mode.");
   }
 
   if (EMAIL_SEARCH_RESULT_LIMIT === 0) {

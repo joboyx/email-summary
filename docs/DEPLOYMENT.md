@@ -120,18 +120,21 @@ This guide covers the complete deployment process for the Email Summary Google A
 
 ### Automated Deployment
 
-#### Using Custom Claude Command
+#### Using Claude CLI Helper
+Inside the Claude Code CLI you can launch the automated helper by starting the shell and invoking the command:
 ```bash
-# Run the automated deployment
-project:deploy
+claude
+claude> /project:deploy
 ```
 
-This command performs:
+This helper performs:
 1. Configuration validation
 2. Code deployment
 3. Trigger updates
 4. Cleanup operations
 5. Git operations
+
+If you're not using the CLI helper, or prefer to run everything yourself, execute the manual steps below.
 
 #### Manual Deployment Steps
 
@@ -201,8 +204,8 @@ git push origin main
 
 #### Development Deployment
 ```bash
-# Switch to dev configuration
-cp .clasp.dev.json .clasp.json
+# Update .clasp.json with your development project settings (create the file if it doesn't exist)
+# Refer to the JSON template above for required fields
 
 # Deploy with debug settings
 npm run deploy
@@ -213,8 +216,8 @@ npm start
 
 #### Production Deployment
 ```bash
-# Switch to prod configuration
-cp .clasp.prod.json .clasp.json
+# Update .clasp.json with your production project settings
+# Ensure the configuration matches the production Google Apps Script project
 
 # Ensure production settings
 # EMAIL_SEND_ENABLED = true

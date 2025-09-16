@@ -154,18 +154,8 @@ echo "secrets/" >> .gitignore
 - **No Data Retention**: Content not stored after processing
 
 #### Content Handling Rules
-```javascript
-// Content truncation for privacy
-const EMAIL_MAX_CONTENT_LENGTH = 500000; // Limit content size
-
-// Remove sensitive information
-function sanitizeContent(content) {
-  // Remove potential PII patterns
-  content = content.replace(/\b\d{3}-\d{2}-\d{4}\b/g, "[SSN REDACTED]");
-  content = content.replace(/\b\d{16}\b/g, "[CARD REDACTED]");
-  return content;
-}
-```
+- **Content truncation**: `EMAIL_MAX_CONTENT_LENGTH` limits the body captured for each email before it is sent to OpenAI.
+- **No automatic redaction**: The current implementation does not strip PII beyond truncation. Add custom sanitization in `summarizeEmails` if stricter handling is required for your environment.
 
 ### Privacy Compliance
 
@@ -505,8 +495,8 @@ function validateSecurityConfig() {
   }
 
   // Check debug settings
-  if (EMAIL_SEND_ENABLED === false && process.env.NODE_ENV === 'production') {
-    issues.push("Email sending disabled in production");
+  if (EMAIL_SEND_ENABLED === false) {
+    issues.push("Email sending is disabled. Verify this is intentional before a production deployment.");
   }
 
   return issues;

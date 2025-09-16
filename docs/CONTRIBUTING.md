@@ -49,16 +49,13 @@ npm install
 ```
 
 #### 4. Configure Development Environment
-```bash
-# Copy environment configuration
-cp .clasp.json.example .clasp.json
-
-# Edit with your development project details
-# {
-#   "projectId": "your-dev-project-id",
-#   "scriptId": "your-dev-script-id",
-#   "rootDir": "~/workspace/email-summary"
-# }
+Create `.clasp.json` in the project root with your development project details:
+```json
+{
+  "projectId": "your-dev-project-id",
+  "scriptId": "your-dev-script-id",
+  "rootDir": "~/workspace/email-summary"
+}
 ```
 
 #### 5. Set Up Google Apps Script
