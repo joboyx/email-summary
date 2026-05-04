@@ -10,7 +10,7 @@ This is a Google Apps Script that automatically summarizes daily emails using Op
 
 - **Runtime**: Google Apps Script (V8 runtime) ⚙️
 - **Language**: JavaScript (ES6+)
-- **APIs**: Gmail API, OpenAI API (GPT-5), Google Script Services
+- **APIs**: Gmail API, OpenAI API (GPT-5.5), Google Script Services
 - **Deployment**: Google clasp CLI tool
 - **Node Version**: v22 (see `.nvmrc`)
 

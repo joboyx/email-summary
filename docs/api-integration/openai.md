@@ -8,7 +8,7 @@
 ## Request Structure
 ```json
 {
-  "model": "gpt-5",
+  "model": "gpt-5.5",
   "messages": [
     {
       "role": "user",

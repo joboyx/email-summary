@@ -10,7 +10,7 @@
 - `EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE` (`["personal"]`): Categories exempted from archiving.
 - `EMAIL_LABEL_ROOT` (`"🤖 EmailSummary"`): Root label name for auto-created labels.
 - `EMAIL_LABEL_ACTION_REQUIRED` (derived): Full label applied when action items exist.
-- `OPENAI_MODEL` (`"gpt-5"`), `OPENAI_MAX_TOKENS` (`50000`): Model and token budget for chat completions.
+- `OPENAI_MODEL` (`"gpt-5.5"`), `OPENAI_MAX_TOKENS` (`50000`): Model and token budget for chat completions.
 
 ## Script Properties
 - `OPENAI_API_KEY`: Required for authenticating to the OpenAI API. Configure via Apps Script UI (`Project Settings > Script properties`).
