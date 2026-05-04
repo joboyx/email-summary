@@ -9,15 +9,15 @@ const EMAIL_SEARCH_RESULT_LIMIT = undefined; // !!! should be `undefined` by def
 
 const EMAIL_RECIPIENT = Session.getActiveUser().getEmail();
 const EMAIL_SUBJECT = `📝 Daily Email Summary for ${new Date().toISOString().split('T')[0]}`;
-const EMAIL_MAX_CONTENT_LENGTH = 500000;
+const EMAIL_MAX_CONTENT_LENGTH = 1_000_000;
 const EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE = ["personal"];
 const EMAIL_LABEL_ROOT = "🤖 EmailSummary";
 const EMAIL_LABEL_ACTION_REQUIRED = `${EMAIL_LABEL_ROOT}/⚠️ ActionRequired`;
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_API_KEY = PropertiesService.getScriptProperties().getProperty("OPENAI_API_KEY");
-const OPENAI_MODEL = "gpt-5";
-const OPENAI_MAX_TOKENS = 50000;
+const OPENAI_MODEL = "gpt-5.5";
+const OPENAI_MAX_TOKENS = 500_000;
 
 const EMAIL_CATEGORIES = [
   { name: "marketing", emoji: "📢", description: "Promotional content, ads, special offers" },

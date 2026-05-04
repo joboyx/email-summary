@@ -13,7 +13,7 @@
 
 ## 3. Summarization (`summarizeEmails`)
 - Constructs OpenAI Chat Completions payload with:
-  - Model `gpt-5`, `max_completion_tokens` = 50,000.
+  - Model `gpt-5.5`, `max_completion_tokens` = 50,000.
   - Single user message containing email metadata and YAML-formatted category list.
   - Behavioral guidelines emphasizing new content and action item threshold.
 - Sends POST via `UrlFetchApp.fetch` with Bearer token from `OPENAI_API_KEY` script property.
