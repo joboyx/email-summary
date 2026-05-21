@@ -4,9 +4,9 @@ Clasp uses **two separate OAuth credential files**. Both are required for full l
 
 ## Credential files
 
-| File | Created by | Used for |
-|------|------------|----------|
-| `~/.clasprc.json` | `npm run setup:global` (`clasp login`) | `clasp push`, `pull`, `deploy`, `logs`, `deployments`, … |
+| File              | Created by                                                     | Used for                                                             |
+| ----------------- | -------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `~/.clasprc.json` | `npm run setup:global` (`clasp login`)                         | `clasp push`, `pull`, `deploy`, `logs`, `deployments`, …             |
 | `./.clasprc.json` | `npm run setup:local` (`clasp login --creds credentials.json`) | `clasp run` / `npm start` (Execution API with your GCP OAuth client) |
 
 `npm run setup` runs **global first, then local**. Do not skip global login: `npm run setup:local` alone is not enough for push or deploy.

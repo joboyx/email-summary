@@ -5,12 +5,16 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "clean": "rm -rf dist",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --max-warnings=0",
+    "prepare": "husky",
     "setup": "npm run setup:global && npm run setup:local",
     "setup:global": "clasp login",
     "setup:local": "clasp login --creds credentials.json",
     "auth:status": "clasp login --status",
     "start": "npm run build && clasp run summarizeAndSendDailyEmail",
-    "test": "npm run build && clasp push --force && clasp deploy && clasp run summarizeAndSendDailyEmail",
+    "test": "npm run lint && jest && npm run build",
     "watch": "clasp logs --watch",
     "watch:open": "clasp logs --open",
     "deploy": "npm run build && clasp push --force && clasp deploy && echo 'Deployed successfully! Delete the old trigger and create a new one with this new version.' && echo 'https://script.google.com/home/projects/18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0/edit'",
@@ -24,9 +28,21 @@
   "author": "",
   "license": "UNLICENSED",
   "description": "",
+  "lint-staged": {
+    "*.{js,mjs,cjs,ts,json,md,yml,yaml}": "prettier --write"
+  },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@google/clasp": "^2.4.2",
     "@types/google-apps-script": "^1.0.100",
-    "typescript": "^5.8.3"
+    "@types/jest": "^30.0.0",
+    "eslint": "^10.4.0",
+    "husky": "^9.1.7",
+    "jest": "^30.4.2",
+    "lint-staged": "^17.0.5",
+    "prettier": "^3.8.3",
+    "ts-jest": "^29.4.11",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.59.4"
   }
 }

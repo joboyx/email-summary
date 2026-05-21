@@ -1,12 +1,14 @@
 # Rewrite Roadmap
 
 ## Drivers for Rewrite
+
 - ~~Single-file script (`Code.js`) mixes orchestration, API integration, and presentation logic.~~ **Addressed (JBY-023)**: code split into `src/` modules.
 - Tight coupling to LLM response format (string parsing) increases fragility.
 - Lack of automated tests or mocks makes regression detection difficult.
 - Manual deployment and trigger management steps are error-prone.
 
 ## Goals
+
 1. ~~Modularize codebase (separate data access, AI integration, templating, and Gmail actions).~~ **Done (JBY-023)** — see `docs/architecture.md` for module map.
 2. Introduce structured data contracts (e.g., JSON responses from OpenRouter) to simplify parsing.
 3. Establish testing harness with mocked services and automated verification.
@@ -14,6 +16,7 @@
 5. Streamline deployment and monitoring (scripts, dashboards, alerting).
 
 ## Proposed Phases
+
 1. **Assessment (Complete)**
    - Complete documentation of existing behavior (this doc set).
    - Identify critical metrics (daily volume, failure rates) via logs.
@@ -32,11 +35,13 @@
    - Add health checks and notification when summaries fail.
 
 ## Open Questions
+
 - Should multiple recipients be supported (team inbox scenarios)?
 - Do we need to redact or anonymize email content before sending to OpenRouter for compliance?
 - Is the Gmail advanced service required for future optimizations?
 
 ## Measuring Success
+
 - Reduced failure rate in Apps Script logs.
 - Faster triage time thanks to clearer logs and structured data.
 - Ability to run automated tests locally before deploy.
