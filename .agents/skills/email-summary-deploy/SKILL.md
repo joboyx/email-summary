@@ -6,9 +6,9 @@ description: >-
   operator to recreate the time trigger. Use when deploying email-summary, running npm run deploy
   for this project, or updating the active Apps Script deployment.
 triggers:
-  - "email-summary-deploy"
-  - "deploy email-summary"
-  - "deploy email summary"
+  - 'email-summary-deploy'
+  - 'deploy email-summary'
+  - 'deploy email summary'
 ---
 
 # email-summary-deploy

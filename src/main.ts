@@ -10,10 +10,10 @@ function summarizeAndSendDailyEmail(): DailySummaryResult {
     sendSummaryEmail(formattedSummary);
     archiveThreads(emailSummaries);
     addLabels(emailSummaries);
-    return { success: true, message: "Email summary processed successfully" };
+    return { success: true, message: 'Email summary processed successfully' };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("Error in summarizeAndSendDailyEmail:", error);
+    console.error('Error in summarizeAndSendDailyEmail:', error);
     return { success: false, message };
   }
 }

@@ -8,16 +8,16 @@ function getSearchStringForLastNDays(n: number): string {
   nDaysAgo.setDate(today.getDate() - n);
 
   const year = nDaysAgo.getFullYear();
-  const month = (nDaysAgo.getMonth() + 1).toString().padStart(2, "0");
-  const day = nDaysAgo.getDate().toString().padStart(2, "0");
+  const month = (nDaysAgo.getMonth() + 1).toString().padStart(2, '0');
+  const day = nDaysAgo.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}/${month}/${day}`;
 
   return `after:${formattedDate}`;
 }
 
 function getPreviousDayEmails(): EmailInput[] {
-  const searchString = `in:inbox ${getSearchStringForLastNDays(EMAIL_SEARCH_PREVIOUS_DAYS)} -subject:"${EMAIL_SUBJECT.split(" for")[0]}"`;
-  console.log("searchString: ", searchString);
+  const searchString = `in:inbox ${getSearchStringForLastNDays(EMAIL_SEARCH_PREVIOUS_DAYS)} -subject:"${EMAIL_SUBJECT.split(' for')[0]}"`;
+  console.log('searchString: ', searchString);
   let threads = GmailApp.search(searchString);
   const emails: EmailInput[] = [];
 
@@ -43,7 +43,7 @@ function getPreviousDayEmails(): EmailInput[] {
         content: message.getPlainBody().substring(0, EMAIL_MAX_CONTENT_LENGTH),
         link: message.getThread().getPermalink(),
       };
-      console.log("email: ", JSON.stringify(email, undefined, 2));
+      console.log('email: ', JSON.stringify(email, undefined, 2));
       emails.push(email);
     });
   }
