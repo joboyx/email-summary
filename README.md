@@ -150,14 +150,8 @@ After making local changes and testing, follow these steps to deploy to producti
 5. **Commit changes:**
    Since `package.json` was updated with the new deployment ID, commit and push the changes to track the active deployment.
 
-### Quick Deployment Command
-The Claude Code CLI bundles an automated deployment helper. Launch the CLI and run the command:
-```bash
-claude
-claude> /project:deploy
-```
-
-This runs the scripted flow described in [the deployment helper](.claude/commands/project/deploy.md). If you prefer to execute each step manually, follow the procedures in Deployment Steps and do it manually.
+### Automated deployment (agent skill)
+Use the [email-summary-deploy](.agents/skills/email-summary-deploy/SKILL.md) skill in your AI agent (Cursor, Codex, Claude Code, etc.) to run the full flow: config validation, deploy, deployment ID update, cleanup, and optional commit. If you prefer to execute each step manually, follow the procedures in Deployment Steps above.
 
 ## References
 
