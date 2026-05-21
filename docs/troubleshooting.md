@@ -32,9 +32,36 @@
 - Examine logs (`Moved to Archive`) for context via `explainEmail` output.
 
 ## Authentication Problems with Clasp
-- Re-run `npm run setup` to refresh OAuth tokens.
-- Confirm `credentials.json` matches the Google Cloud project attached to the Apps Script.
-- Delete `.clasprc.json` (if stale) and log in again.
+
+Clasp uses **two** credential files. See [clasp-auth.md](clasp-auth.md).
+
+### `invalid_grant` on `clasp pull`, `push`, or `deploy`
+
+These commands use **global** auth (`~/.clasprc.json`), not `./.clasprc.json`.
+
+```bash
+npm run setup:global
+npm run auth:status
+npx clasp pull
+```
+
+### `invalid_grant` or auth errors on `npm start` / `clasp run`
+
+Uses **local** auth (`./.clasprc.json` from `credentials.json`):
+
+```bash
+npm run setup:local
+```
+
+### `npm run setup:local` exits 1 after "Authorization successful"
+
+Local credentials are often saved anyway. Verify global auth with `npm run auth:status` and `npx clasp pull`, then retry `npm start`.
+
+### General checks
+
+- Confirm `credentials.json` is a Desktop OAuth client for the GCP project in `.clasp.json` (`projectId`).
+- Delete stale tokens and re-login: `rm ~/.clasprc.json` → `npm run setup:global`; `rm .clasprc.json` → `npm run setup:local`.
+- WSL/headless: `clasp login --no-localhost` or `clasp login --creds credentials.json --no-localhost`.
 
 ## Permission Errors When Running Script
 - Ensure Apps Script project scopes match the ones in `appsscript.json`.

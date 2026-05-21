@@ -12,8 +12,11 @@
 nvm install
 nvm use
 npm install
-npm run setup   # clasp login --creds credentials.json
+npm run setup        # setup:global (~/.clasprc.json) then setup:local (./.clasprc.json)
+npm run auth:status  # verify global login
 ```
+
+Clasp auth is split: **global** for push/deploy, **local** (`credentials.json`) for `clasp run`. See [clasp-auth.md](clasp-auth.md).
 
 ## Routine Deployment
 ```bash
