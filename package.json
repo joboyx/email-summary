@@ -32,7 +32,7 @@
   "license": "UNLICENSED",
   "description": "",
   "lint-staged": {
-    "*.{js,mjs,cjs,ts,json,md,yml,yaml}": "prettier --write"
+    "*": "prettier --write --ignore-unknown"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
