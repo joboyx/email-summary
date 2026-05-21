@@ -2,6 +2,11 @@
  * HTML digest email builder and category legend rendering.
  */
 
+/**
+ * Render summarized emails as the HTML body sent in the daily digest.
+ * @param summaries Categorized summaries produced by OpenRouter.
+ * @returns Self-contained HTML document fragment for MailApp.
+ */
 function formatSummariesAsHTML(summaries: EmailSummary[]): string {
   let html = `
     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;'>

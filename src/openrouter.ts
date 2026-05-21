@@ -4,6 +4,8 @@
 
 /**
  * POST to OpenRouter chat/completions with 429 retry and structured error handling.
+ * @param payload Chat completion request body for the summarization model.
+ * @returns Parsed OpenRouter response with assistant message content.
  */
 function fetchOpenRouterChatCompletion(
   payload: OpenRouterChatCompletionRequest,
@@ -48,7 +50,7 @@ function fetchOpenRouterChatCompletion(
 
     if (isRateLimited) {
       lastError = new Error(
-        `OpenRouter rate limited: ${json.error?.message || text.substring(0, 200)}`,
+        `OpenRouter rate limited: ${json.error?.message ?? text.substring(0, 200)}`,
       );
       if (attempt < OPENROUTER_MAX_RETRIES) {
         console.warn(
@@ -62,7 +64,7 @@ function fetchOpenRouterChatCompletion(
 
     if (json.error) {
       throw new Error(
-        `OpenRouter error ${json.error.code || status}: ${json.error.message || JSON.stringify(json.error)}`,
+        `OpenRouter error ${json.error.code ?? status}: ${json.error.message ?? JSON.stringify(json.error)}`,
       );
     }
 
@@ -77,9 +79,15 @@ function fetchOpenRouterChatCompletion(
     return json;
   }
 
-  throw lastError || new Error('OpenRouter request failed after retries');
+  throw lastError ?? new Error('OpenRouter request failed after retries');
 }
 
+/**
+ * Extract a labeled field from newline-delimited model output.
+ * @param lines Response lines split from OpenRouter message content.
+ * @param prefix Field prefix to match, e.g. `summary:` or `category:`.
+ * @returns Trimmed value after the matched prefix.
+ */
 function parseSummaryLine(lines: string[], prefix: string): string {
   const line = lines.find((l) => l.startsWith(prefix));
   if (!line) {
@@ -88,6 +96,11 @@ function parseSummaryLine(lines: string[], prefix: string): string {
   return line.slice(prefix.length).trim();
 }
 
+/**
+ * Summarize and categorize each email via OpenRouter, then sort by category and date.
+ * @param emails Normalized inbox messages from Gmail search.
+ * @returns Summaries ready for HTML formatting and Gmail side effects.
+ */
 function summarizeEmails(emails: EmailInput[]): EmailSummary[] {
   const summaries: EmailSummary[] = [];
 
@@ -167,7 +180,8 @@ function summarizeEmails(emails: EmailInput[]): EmailSummary[] {
 
       summaries.push(summary);
     } catch (error) {
-      console.error(`Failed to summarize email: ${email.subject}. Error: ${error}`);
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Failed to summarize email: ${email.subject}. Error: ${message}`);
     }
   });
 

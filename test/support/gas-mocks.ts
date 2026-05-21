@@ -128,13 +128,13 @@ export function createMockThread(
   options: {
     id: string;
     permalink?: string;
-    messages: Array<{
+    messages: {
       id: string;
       date: Date;
       from?: string;
       subject?: string;
       plainBody?: string;
-    }>;
+    }[];
   },
 ): MockGmailThread {
   const thread: MockGmailThread = {
@@ -164,7 +164,7 @@ export function createMockThread(
     getSubject: () => message.subject ?? 'Subject',
     getPlainBody: () => message.plainBody ?? 'Body',
     getThread: () => thread as unknown as GoogleAppsScript.Gmail.GmailThread,
-  })) as MockGmailMessage[];
+  }));
 
   mocks.gmailThreads.set(thread.id, thread);
   return thread;

@@ -2,6 +2,10 @@
  * Orchestration entry point for the daily email summary pipeline.
  */
 
+/**
+ * Fetch yesterday's inbox messages, summarize them, send the digest, then archive and label threads.
+ * @returns Success or failure result for clasp runs and trigger failure notifications.
+ */
 function summarizeAndSendDailyEmail(): DailySummaryResult {
   try {
     const previousDayEmails = getPreviousDayEmails();

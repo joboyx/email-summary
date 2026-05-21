@@ -42,12 +42,12 @@ interface GasTestMocks {
   sessionEmail: string;
   scriptProperties: Record<string, string | null>;
   urlFetchResponses: UrlFetchMockResponse[];
-  urlFetchCalls: Array<{ url: string; options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions }>;
+  urlFetchCalls: { url: string; options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions }[];
   sentEmails: GoogleAppsScript.Mail.MailAdvancedParameters[];
   gmailThreads: Map<string, MockGmailThread>;
   gmailLabels: Map<string, MockGmailLabel>;
   archivedThreadIds: string[];
-  labelAssignments: Array<{ threadId: string; labelName: string }>;
+  labelAssignments: { threadId: string; labelName: string }[];
   consoleLogs: string[];
   consoleWarnings: string[];
   consoleErrors: string[];
