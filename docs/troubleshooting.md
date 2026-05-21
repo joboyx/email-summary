@@ -11,19 +11,20 @@
 - Validate `EMAIL_SEARCH_PREVIOUS_DAYS` and `EMAIL_SEARCH_RESULT_LIMIT` settings.
 - Ensure digest subject filter (`-subject:"📝 Daily Email Summary"`) matches actual sent subject.
 
-## OpenAI Errors (`Failed to summarize email`) 
-- Confirm `OPENAI_API_KEY` is valid and has usage quota.
+## OpenRouter Errors (`Failed to summarize email`) 
+- Confirm `OPENROUTER_API_KEY` is set in script properties and has credits/quota on OpenRouter.
+- Remove legacy `OPENAI_API_KEY` if the script was migrated but the old property remains unused.
 - Review response payload in logs (if available) for rate limit or validation errors.
-- Reduce email volume or implement retry logic during peak load (future enhancement).
+- HTTP 429 responses retry automatically (3 attempts, 2s delay). Persistent 429s may indicate inbox volume exceeding OpenRouter rate limits — reduce `EMAIL_SEARCH_RESULT_LIMIT` temporarily.
 
 ## Invalid Emoji Warning
-- Occurs when OpenAI response omits or changes the emoji prefix.
+- Occurs when OpenRouter/model response omits or changes the emoji prefix.
 - Review the email content and prompt; adjust `EMAIL_CATEGORIES` descriptions as needed.
 - Consider re-running summarization after prompt updates.
 
 ## Labels Not Appearing
 - Ensure `EMAIL_LABEL_ENABLED` is `true`.
-- Check that action item line is not `None` (case-insensitive) in the OpenAI response.
+- Check that action item line is not `None` (case-insensitive) in the OpenRouter response.
 - Verify label hierarchy exists; `getOrCreateLabel` logs creation steps.
 
 ## Archiving Unexpected Emails

@@ -9,15 +9,17 @@ const EMAIL_SEARCH_RESULT_LIMIT = undefined; // !!! should be `undefined` by def
 
 const EMAIL_RECIPIENT = Session.getActiveUser().getEmail();
 const EMAIL_SUBJECT = `📝 Daily Email Summary for ${new Date().toISOString().split('T')[0]}`;
-const EMAIL_MAX_CONTENT_LENGTH = 1_000_000;
+const EMAIL_MAX_CONTENT_LENGTH = 1000000;
 const EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE = ["personal"];
 const EMAIL_LABEL_ROOT = "🤖 EmailSummary";
 const EMAIL_LABEL_ACTION_REQUIRED = `${EMAIL_LABEL_ROOT}/⚠️ ActionRequired`;
 
-const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-const OPENAI_API_KEY = PropertiesService.getScriptProperties().getProperty("OPENAI_API_KEY");
-const OPENAI_MODEL = "gpt-5.5";
-const OPENAI_MAX_TOKENS = 500_000;
+const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const OPENROUTER_API_KEY = PropertiesService.getScriptProperties().getProperty("OPENROUTER_API_KEY");
+const OPENROUTER_MODEL = "~openai/gpt-latest";
+const OPENROUTER_MAX_TOKENS = 500000;
+const OPENROUTER_MAX_RETRIES = 3;
+const OPENROUTER_RETRY_DELAY_MS = 2000;
 
 const EMAIL_CATEGORIES = [
   { name: "marketing", emoji: "📢", description: "Promotional content, ads, special offers" },
@@ -106,8 +108,82 @@ function getPreviousDayEmails() {
   return emails;
 }
 
+/**
+ * POST to OpenRouter chat/completions with 429 retry and structured error handling.
+ * @param {Object} payload Chat completions request body.
+ * @returns {Object} Parsed completion JSON with choices[0].message.content.
+ */
+function fetchOpenRouterChatCompletion(payload) {
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    muteHttpExceptions: true,
+    headers: {
+      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+      "HTTP-Referer": "https://script.google.com",
+      "X-Title": "email-summary",
+    },
+    payload: JSON.stringify(payload),
+  };
+
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= OPENROUTER_MAX_RETRIES; attempt++) {
+    const response = UrlFetchApp.fetch(OPENROUTER_API_URL, options);
+    const status = response.getResponseCode();
+    const text = response.getContentText();
+    let json;
+
+    try {
+      json = JSON.parse(text);
+    } catch (parseError) {
+      lastError = new Error(`OpenRouter returned non-JSON (HTTP ${status})`);
+      if (status === 429 && attempt < OPENROUTER_MAX_RETRIES) {
+        console.warn(`OpenRouter HTTP 429 (attempt ${attempt}/${OPENROUTER_MAX_RETRIES}), retrying in ${OPENROUTER_RETRY_DELAY_MS}ms`);
+        Utilities.sleep(OPENROUTER_RETRY_DELAY_MS);
+        continue;
+      }
+      throw lastError;
+    }
+
+    console.log("llm: ", JSON.stringify(json, undefined, 2));
+
+    const isRateLimited = status === 429 || json.error?.code === 429;
+
+    if (isRateLimited) {
+      lastError = new Error(`OpenRouter rate limited: ${json.error?.message || text.substring(0, 200)}`);
+      if (attempt < OPENROUTER_MAX_RETRIES) {
+        console.warn(`OpenRouter 429 (attempt ${attempt}/${OPENROUTER_MAX_RETRIES}), retrying in ${OPENROUTER_RETRY_DELAY_MS}ms`);
+        Utilities.sleep(OPENROUTER_RETRY_DELAY_MS);
+        continue;
+      }
+      throw lastError;
+    }
+
+    if (json.error) {
+      throw new Error(`OpenRouter error ${json.error.code || status}: ${json.error.message || JSON.stringify(json.error)}`);
+    }
+
+    if (status < 200 || status >= 300) {
+      throw new Error(`OpenRouter HTTP ${status}: ${text.substring(0, 200)}`);
+    }
+
+    if (!json.choices?.[0]?.message?.content) {
+      throw new Error("OpenRouter response missing choices[0].message.content");
+    }
+
+    return json;
+  }
+
+  throw lastError || new Error("OpenRouter request failed after retries");
+}
+
 function summarizeEmails(emails) {
   const summaries = [];
+
+  if (!OPENROUTER_API_KEY) {
+    throw new Error("OPENROUTER_API_KEY script property is not set. Add it in Apps Script > Project Settings > Script properties.");
+  }
 
   emails.forEach(email => {
     // Convert EMAIL_CATEGORIES to YAML format
@@ -116,7 +192,7 @@ function summarizeEmails(emails) {
     ).join('\n');
 
     const payload = {
-      model: OPENAI_MODEL,
+      model: OPENROUTER_MODEL,
       messages: [
         {
           role: "user",
@@ -154,22 +230,12 @@ function summarizeEmails(emails) {
             `
         }
       ],
-      max_completion_tokens: OPENAI_MAX_TOKENS,
-    };
-
-    const options = {
-      method: "post",
-      contentType: "application/json",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`
-      },
-      payload: JSON.stringify(payload)
+      max_completion_tokens: OPENROUTER_MAX_TOKENS,
+      reasoning: { effort: "low", exclude: true },
     };
 
     try {
-      const response = UrlFetchApp.fetch(OPENAI_API_URL, options);
-      const json = JSON.parse(response.getContentText());
-      console.log("llm: ", JSON.stringify(json, undefined, 2));
+      const json = fetchOpenRouterChatCompletion(payload);
       const summaryText = json.choices[0].message.content.split('\n');
 
       const summary = {

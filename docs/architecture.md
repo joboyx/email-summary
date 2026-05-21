@@ -11,7 +11,7 @@
   - **Helpers**:
     - `getSearchStringForLastNDays` builds Gmail search queries.
     - `getPreviousDayEmails` pulls and normalizes Gmail messages.
-    - `summarizeEmails` invokes OpenAI and parses responses.
+    - `summarizeEmails` invokes OpenRouter and parses responses.
     - `formatSummariesAsHTML` builds the digest email body.
     - `sendSummaryEmail`, `archiveThreads`, `addLabels` apply email actions.
     - `getOrCreateLabel`, `explainEmail` support label management and logging.
@@ -24,7 +24,7 @@
 2. **Transformation**:
    - Messages filtered to same date range client-side.
    - Plain text content trimmed to `EMAIL_MAX_CONTENT_LENGTH`.
-   - OpenAI chat completions request formed with category YAML block and behavior guidelines.
+   - OpenRouter chat completions request formed with category YAML block, reasoning config, and behavior guidelines.
    - Response parsed into `summary`, `category`, `actionItem` fields.
    - Summaries sorted by category then message date (descending).
 3. **Output**:
@@ -36,12 +36,12 @@
 ## External Integrations
 - **GmailApp**: Search, thread access, move to archive.
 - **MailApp**: Send composed summary email.
-- **UrlFetchApp**: Send HTTPS POST request to `https://api.openai.com/v1/chat/completions`.
-- **PropertiesService**: Read `OPENAI_API_KEY` script property for authorization header.
+- **UrlFetchApp**: Send HTTPS POST request to `https://openrouter.ai/api/v1/chat/completions`.
+- **PropertiesService**: Read `OPENROUTER_API_KEY` script property for authorization header.
 
 ## Error Surfaces
 - `summarizeAndSendDailyEmail` wraps flow in try/catch and returns `{ success, message }`.
-- OpenAI failures logged with the subject; failing emails are skipped but do not halt execution.
+- OpenRouter failures logged with the subject; failing emails are skipped but do not halt execution.
 - Emoji validation warns if the response does not include a known category emoji, substituting an error marker.
 - Label creation falls back to on-demand creation per segment using cached references (`labelCache`).
 
