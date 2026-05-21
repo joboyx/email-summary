@@ -1,6 +1,6 @@
 # Configuration Reference
 
-## Runtime Flags (`src/config.js`)
+## Runtime Flags (`src/config.ts`)
 - `EMAIL_SEND_ENABLED` (default `true`): Enables sending the digest email. Set to `false` during testing to dry-run the pipeline.
 - `EMAIL_ARCHIVE_ENABLED` (default `true`): Determines whether processed threads are archived.
 - `EMAIL_LABEL_ENABLED` (default `true`): Controls whether action-required labels are added.
@@ -35,11 +35,12 @@
 - `meta.activeDeploymentId`: Track the deployment number currently bound to triggers (must be updated manually post-deploy).
 
 ## External Files
-- `.clasp.json`: Contains `projectId`, `scriptId`, and `rootDir` (set to `src/`; not committed).
+- `.clasp.json`: Contains `projectId`, `scriptId`, and `rootDir` (set to `dist/`; not committed). Run `npm run build` before push/deploy.
 - `credentials.json`: Desktop OAuth client for **local** clasp login (`setup:local`); not in repo.
 - `~/.clasprc.json`: **Global** clasp auth for push, pull, deploy (`setup:global`); not in repo.
 - `./.clasprc.json`: **Local** clasp auth for `clasp run` / `npm start`; not in repo.
 
 ## Trigger Configuration (manual)
 - Time-based trigger should target `summarizeAndSendDailyEmail`, scheduled daily (5–6 AM recommended per README).
+- Recreate the time-based trigger after every deploy so it points at the latest deployment version; this is still a manual post-deploy step.
 - Failure notifications set to "Notify me immediately".

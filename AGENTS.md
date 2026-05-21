@@ -9,7 +9,7 @@ This is a Google Apps Script that automatically summarizes daily emails using Op
 ## Technology Stack
 
 - **Runtime**: Google Apps Script (V8 runtime) ⚙️
-- **Language**: JavaScript (ES6+)
+- **Language**: TypeScript (compiled to JavaScript for Apps Script)
 - **APIs**: Gmail API, OpenRouter API (`~openai/gpt-latest`), Google Script Services
 - **Deployment**: Google clasp CLI tool
 - **Node Version**: v22 (see `.nvmrc`)
@@ -17,21 +17,24 @@ This is a Google Apps Script that automatically summarizes daily emails using Op
 ## Key Components
 
 ### Core Architecture
-- **Modular source layout**: Apps Script source lives under `src/`; clasp `rootDir` points at that directory
-- **Configuration-driven**: Debug flags at the top of `src/config.js` control behavior
+- **Modular source layout**: TypeScript source lives under `src/`; `npm run build` emits Apps Script-compatible JavaScript to `dist/`; clasp `rootDir` points at `dist/`
+- **Configuration-driven**: Debug flags at the top of `src/config.ts` control behavior
 - **AI-powered Categorization**: Uses OpenRouter to categorize and summarize emails
 - **Gmail Integration**: Uses Gmail API for email processing, archiving, and labeling
 
-### Module Map (`src/`)
+### Module Map (`src/` → `dist/` after build)
 | File | Responsibility |
 |------|----------------|
-| `config.js` | Side-effect flags, search limits, categories, OpenRouter constants |
-| `gmail-search.js` | Gmail search string builder and message retrieval |
-| `openrouter.js` | OpenRouter API client and summarization prompt/parse logic |
-| `html-format.js` | Digest HTML builder and category legend |
-| `gmail-actions.js` | Send digest, archive threads, labels, label cache |
-| `main.js` | Entry point: `summarizeAndSendDailyEmail` orchestration |
-| `appsscript.json` | Apps Script manifest (timezone, scopes, runtime) |
+| `types.d.ts` | Shared interfaces (`EmailInput`, `EmailSummary`, OpenRouter shapes) |
+| `config.ts` | Side-effect flags, search limits, categories, OpenRouter constants |
+| `gmail-search.ts` | Gmail search string builder and message retrieval |
+| `openrouter.ts` | OpenRouter API client and summarization prompt/parse logic |
+| `html-format.ts` | Digest HTML builder and category legend |
+| `gmail-actions.ts` | Send digest, archive threads, labels, label cache |
+| `main.ts` | Entry point: `summarizeAndSendDailyEmail` orchestration |
+| `appsscript.json` | Manifest (timezone, scopes, runtime); copied to `dist/` on build |
+
+Apps Script loads all compiled `.js` files in `dist/` into a shared global namespace (`tsconfig` `module: "None"`). No duplicate function names across files.
 
 ### Email Processing Pipeline
 1. **Email Retrieval**: Searches inbox for emails from the last N days
@@ -41,7 +44,7 @@ This is a Google Apps Script that automatically summarizes daily emails using Op
 5. **Post-processing**: Archives threads and adds labels based on rules
 
 ### Configuration Constants
-Key configuration variables at the top of `src/config.js`:
+Key configuration variables at the top of `src/config.ts`:
 - `EMAIL_SEND_ENABLED`: Controls email sending (set to `false` for testing)
 - `EMAIL_ARCHIVE_ENABLED`: Controls automatic archiving
 - `EMAIL_LABEL_ENABLED`: Controls label management
@@ -67,7 +70,10 @@ See `docs/clasp-auth.md` for dual-auth details and troubleshooting (`invalid_gra
 
 ### Development Workflow
 ```bash
-# Run the main function directly
+# Compile TypeScript to dist/
+npm run build
+
+# Run the main function directly (builds first)
 npm start
 
 # Test workflow: push, deploy, and run
@@ -99,7 +105,7 @@ npm run deployments:cleanup
 {
   "projectId": "your-google-cloud-project-id",
   "scriptId": "your-apps-script-id",
-  "rootDir": "path-to-project/src"
+  "rootDir": "path-to-project/dist"
 }
 ```
 
@@ -162,6 +168,8 @@ Set up in Google Apps Script console:
 3. Type: Day timer
 4. Time: 5-6 AM (recommended)
 5. Error Notification: `Notify me immediately`
+
+Recreate this trigger after every deploy so it points at the latest deployment version. Trigger automation is not implemented yet.
 
 ### Deployment Tracking
 - `package.json` includes `meta.activeDeploymentId` for deployment management

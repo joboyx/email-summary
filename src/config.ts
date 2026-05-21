@@ -5,15 +5,14 @@
 /*
  * DEBUG
  */
-// TODO JHJ TEMP DO NOT COMMIT YET
 const EMAIL_SEND_ENABLED = true; // !!! should be `true` by default
-const EMAIL_ARCHIVE_ENABLED = false; // !!! should be `true` by default
-const EMAIL_LABEL_ENABLED = false; // !!! should be `true` by default
-const EMAIL_SEARCH_PREVIOUS_DAYS = 1; // !!! shoulde be `1` by default
-const EMAIL_SEARCH_RESULT_LIMIT = 3; // !!! should be `undefined` by default for limitless, otherwise set to a number
+const EMAIL_ARCHIVE_ENABLED = true; // !!! should be `true` by default
+const EMAIL_LABEL_ENABLED = true; // !!! should be `true` by default
+const EMAIL_SEARCH_PREVIOUS_DAYS = 1; // !!! should be `1` by default
+const EMAIL_SEARCH_RESULT_LIMIT: number | undefined = undefined; // !!! should be `undefined` by default for limitless, otherwise set to a number
 
 const EMAIL_RECIPIENT = Session.getActiveUser().getEmail();
-const EMAIL_SUBJECT = `📝 Daily Email Summary for ${new Date().toISOString().split('T')[0]}`;
+const EMAIL_SUBJECT = `📝 Daily Email Summary for ${new Date().toISOString().split("T")[0]}`;
 const EMAIL_MAX_CONTENT_LENGTH = 1000000;
 const EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE = ["personal"];
 const EMAIL_LABEL_ROOT = "🤖 EmailSummary";
@@ -26,7 +25,7 @@ const OPENROUTER_MAX_TOKENS = 500000;
 const OPENROUTER_MAX_RETRIES = 3;
 const OPENROUTER_RETRY_DELAY_MS = 2000;
 
-const EMAIL_CATEGORIES = [
+const EMAIL_CATEGORIES: EmailCategory[] = [
   { name: "marketing", emoji: "📢", description: "Promotional content, ads, special offers" },
   { name: "personal", emoji: "👥", description: "Messages from family, friends, personal contacts" },
   { name: "social-media", emoji: "📱", description: "Notifications from social platforms" },
@@ -35,5 +34,5 @@ const EMAIL_CATEGORIES = [
   { name: "spam", emoji: "🚫", description: "Unwanted or junk emails" },
   { name: "newsletter", emoji: "📰", description: "Subscriptions to newsletters and blogs" },
   { name: "support", emoji: "🛟", description: "Customer service and helpdesk communications" },
-  { name: "notifications", emoji: "🔔", description: "System notifications and alerts" }
+  { name: "notifications", emoji: "🔔", description: "System notifications and alerts" },
 ];

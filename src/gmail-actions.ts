@@ -2,21 +2,21 @@
  * Gmail side effects: send digest, archive threads, apply labels, and label cache.
  */
 
-function sendSummaryEmail(formattedSummary) {
+function sendSummaryEmail(formattedSummary: string): void {
   if (!EMAIL_SEND_ENABLED) {
     return;
   }
 
-  const data = {
+  const data: GoogleAppsScript.Mail.MailAdvancedParameters = {
     to: EMAIL_RECIPIENT,
     subject: EMAIL_SUBJECT,
-    htmlBody: formattedSummary
+    htmlBody: formattedSummary,
   };
 
   MailApp.sendEmail(data);
 }
 
-function archiveThreads(emails) {
+function archiveThreads(emails: EmailSummary[]): void {
   if (!EMAIL_ARCHIVE_ENABLED) {
     return;
   }
@@ -34,14 +34,14 @@ function archiveThreads(emails) {
   }
 }
 
-function addLabels(emails) {
+function addLabels(emails: EmailSummary[]): void {
   if (!EMAIL_LABEL_ENABLED) {
     return;
   }
 
   for (const email of emails) {
     const thread = GmailApp.getThreadById(email.threadId);
-    const hasActionItem = email.actionItem && email.actionItem.toLowerCase() !== 'none';
+    const hasActionItem = email.actionItem && email.actionItem.toLowerCase() !== "none";
     if (hasActionItem) {
       thread.addLabel(getOrCreateLabel(EMAIL_LABEL_ACTION_REQUIRED));
       console.log(`Added label: ${EMAIL_LABEL_ACTION_REQUIRED} to email: ${explainEmail(email)}`);
@@ -49,19 +49,20 @@ function addLabels(emails) {
   }
 }
 
-const labelCache = {};
+const labelCache: Record<string, GoogleAppsScript.Gmail.GmailLabel> = {};
+
 /**
  * Get or create a label. Supported nested labels.
  * Auto-creates labels in every level
  */
-function getOrCreateLabel(labelName) {
+function getOrCreateLabel(labelName: string): GoogleAppsScript.Gmail.GmailLabel {
   if (labelCache[labelName]) {
     console.log("Label found in cache: " + labelName);
     return labelCache[labelName];
   }
 
-  const labelParts = labelName.split('/');
-  let currentLabelPath = '';
+  const labelParts = labelName.split("/");
+  let currentLabelPath = "";
 
   for (const part of labelParts) {
     currentLabelPath = currentLabelPath ? `${currentLabelPath}/${part}` : part;
@@ -83,6 +84,6 @@ function getOrCreateLabel(labelName) {
 /**
  * Explain the email in a human-readable format
  */
-function explainEmail(email) {
+function explainEmail(email: EmailSummary): string {
   return `threadId[${email.threadId}] messageId[${email.messageId}] link[${email.link}] subject[${email.subject}] category[${email.category}] actionItem[${email.actionItem}]`;
 }

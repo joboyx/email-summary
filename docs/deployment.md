@@ -4,7 +4,7 @@
 - Node.js version from `.nvmrc` (install via `nvm install && nvm use`).
 - `@google/clasp` dev dependency installed (`npm install`).
 - Google OAuth credentials stored at `credentials.json` (downloaded from Google Cloud console).
-- `.clasp.json` configured with correct `projectId`, `scriptId`, and `rootDir` (must point at `src/`).
+- `.clasp.json` configured with correct `projectId`, `scriptId`, and `rootDir` (must point at `dist/` after TypeScript build).
 - Script property `OPENROUTER_API_KEY` set in the Apps Script project settings (remove legacy `OPENAI_API_KEY` after migration).
 
 ## Initial Setup
@@ -23,9 +23,10 @@ Clasp auth is split: **global** for push/deploy, **local** (`credentials.json`) 
 npm run deploy
 ```
 This executes:
-1. `clasp push --force`: Uploads local script files to Apps Script.
-2. `clasp deploy`: Creates a new deployment version.
-3. Prints a reminder to recreate the time trigger and the project URL.
+1. `npm run build`: Compiles `src/*.ts` to `dist/*.js` and copies `appsscript.json`.
+2. `clasp push --force`: Uploads compiled files from `dist/` to Apps Script.
+3. `clasp deploy`: Creates a new deployment version.
+4. Prints a reminder to recreate the time trigger and the project URL.
 
 ### Post-Deploy Steps
 1. Copy the Apps Script URL emitted by the deploy command (or stored in README).

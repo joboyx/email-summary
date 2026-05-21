@@ -2,7 +2,7 @@
  * HTML digest email builder and category legend rendering.
  */
 
-function formatSummariesAsHTML(summaries) {
+function formatSummariesAsHTML(summaries: EmailSummary[]): string {
   let html = `
     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;'>
       <div style='background-color: #f4f4f4; padding: 20px; text-align: center;'>
@@ -14,7 +14,7 @@ function formatSummariesAsHTML(summaries) {
         <table style='width: 100%; border-collapse: collapse;'>
           <tbody>`;
 
-  summaries.forEach(summary => {
+  summaries.forEach((summary) => {
     html += `
             <tr style='border-bottom: 1px solid #eee;'>
               <td style='padding: 15px 0;'>
@@ -22,7 +22,7 @@ function formatSummariesAsHTML(summaries) {
                 <div style='color: #666; font-size: 15px; margin-bottom: 4px;'><strong>Subject:</strong> ${summary.subject}</div>
                 <div style='color: #666; font-size: 15px;'><strong>From:</strong> ${summary.from} | <strong>Category:</strong> ${summary.category}</div>`;
 
-    if (summary.actionItem && summary.actionItem.toLowerCase() !== 'none') {
+    if (summary.actionItem && summary.actionItem.toLowerCase() !== "none") {
       html += `<div style='background: #fff3cd; padding: 8px; border-radius: 4px; margin-top: 8px;'>
                 <span style='font-size: 18px;'>⚠️</span> ${summary.actionItem}
               </div>`;
@@ -40,7 +40,7 @@ function formatSummariesAsHTML(summaries) {
         </table>
         <div style='margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;'>
           <strong>Categories:</strong><br>`;
-  EMAIL_CATEGORIES.forEach(category => {
+  EMAIL_CATEGORIES.forEach((category) => {
     html += `<div style='margin: 8px 0;'>${category.emoji} ${category.name} - ${category.description}</div>`;
   });
   html += `

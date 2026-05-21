@@ -2,21 +2,22 @@
 
 ## Runtime Context
 - **Platform**: Google Apps Script, V8 runtime (`src/appsscript.json`).
-- **Deployment tooling**: `clasp` CLI (see `package.json` scripts); `rootDir` in `.clasp.json` points at `src/`.
+- **Deployment tooling**: `clasp` CLI (see `package.json` scripts); TypeScript in `src/` compiles to `dist/`; `rootDir` in `.clasp.json` points at `dist/`.
 - **Hosting**: Bound to the user's Google account; execution scoped to the owner's Gmail data.
 
 ## Components
-Apps Script loads all `.js` files in `src/` into a shared global namespace (no ES modules).
+Apps Script loads all compiled `.js` files in `dist/` into a shared global namespace (`tsconfig` `module: "None"`; no ES modules).
 
-| Module | Key symbols |
+| Module (source) | Key symbols |
 |--------|-------------|
-| `src/main.js` | **Entry point**: `summarizeAndSendDailyEmail` orchestrates the workflow |
-| `src/config.js` | `EMAIL_*` flags, `EMAIL_CATEGORIES`, `OPENROUTER_*` constants |
-| `src/gmail-search.js` | `getSearchStringForLastNDays`, `getPreviousDayEmails` |
-| `src/openrouter.js` | `fetchOpenRouterChatCompletion`, `summarizeEmails` |
-| `src/html-format.js` | `formatSummariesAsHTML` |
-| `src/gmail-actions.js` | `sendSummaryEmail`, `archiveThreads`, `addLabels`, `getOrCreateLabel`, `explainEmail`, `labelCache` |
-| `src/appsscript.json` | Time zone (Asia/Manila), OAuth scopes, advanced Gmail API |
+| `src/main.ts` | **Entry point**: `summarizeAndSendDailyEmail` orchestrates the workflow |
+| `src/config.ts` | `EMAIL_*` flags, `EMAIL_CATEGORIES`, `OPENROUTER_*` constants |
+| `src/gmail-search.ts` | `getSearchStringForLastNDays`, `getPreviousDayEmails` |
+| `src/openrouter.ts` | `fetchOpenRouterChatCompletion`, `summarizeEmails` |
+| `src/html-format.ts` | `formatSummariesAsHTML` |
+| `src/gmail-actions.ts` | `sendSummaryEmail`, `archiveThreads`, `addLabels`, `getOrCreateLabel`, `explainEmail`, `labelCache` |
+| `src/types.d.ts` | Shared interfaces for email and OpenRouter data contracts |
+| `src/appsscript.json` | Time zone (Asia/Manila), OAuth scopes, advanced Gmail API (copied to `dist/` on build) |
 | `package.json` | Node environment metadata plus `clasp` automation scripts and deployment tracking (`meta.activeDeploymentId`) |
 | `credentials.json` | OAuth credentials for clasp (not tracked in git) |
 

@@ -31,7 +31,7 @@ To set up the project, follow these steps:
      {
        "projectId": "emailsummary-438014",
        "scriptId": "18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0",
-       "rootDir": "~/workspace/email-summary/src"
+       "rootDir": "~/workspace/personal/email-summary/dist"
      }
      ```
 
@@ -64,12 +64,18 @@ To set up the project, follow these steps:
 
    **Migration note:** Set `OPENROUTER_API_KEY` before deploying code that reads it; the script fails fast if the property is missing.
 
-6. Deploy the script:
+6. Build and deploy the script:
 
+   - Compile TypeScript to `dist/` (also runs automatically before push/run/deploy scripts):
+     ```bash
+     npm run build
+     ```
    - Push and deploy the script:
      ```bash
      npm run deploy
      ```
+
+   **Note:** Set `.clasp.json` `rootDir` to `dist/`, not `src/`. Source lives in `src/` as `.ts` files; clasp uploads compiled output from `dist/`.
 
 7. Create a trigger for the script to run daily:
    - Go to the Apps Script editor
@@ -112,7 +118,8 @@ npm run watch:open
 After making local changes and testing, follow these steps to deploy to production:
 
 ### Pre-deployment Checklist
-- Ensure all debug configuration values in `src/config.js` are set to their default production values:
+- Run `npm run build` so `dist/` matches `src/`.
+- Ensure all debug configuration values in `src/config.ts` are set to their default production values:
   - `EMAIL_SEND_ENABLED = true`
   - `EMAIL_ARCHIVE_ENABLED = true` 
   - `EMAIL_LABEL_ENABLED = true`
