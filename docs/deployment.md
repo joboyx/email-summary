@@ -48,7 +48,7 @@ This executes:
 npm start  # run summarizeAndSendDailyEmail via clasp run
 ```
 
-`npm test` is local-only verification: lint with zero warnings, Jest tests in `test/`, and the TypeScript build.
+`npm test` is local-only verification: lint with zero warnings, type coverage on `src/`, Jest tests in `test/`, and the TypeScript build.
 
 ## Deployment Maintenance
 

@@ -3,7 +3,7 @@
 ## Current Coverage
 
 - **Manual execution**: `npm start` runs `summarizeAndSendDailyEmail` against live Gmail data. This is the primary validation path.
-- **Local verification (`npm test`)**: Runs ESLint with `--max-warnings=0`, Jest tests in `test/*.test.ts`, and the TypeScript build without clasp side effects.
+- **Local verification (`npm test`)**: Runs ESLint with `--max-warnings=0`, `type-coverage` on `src/` (100% threshold via `tsconfig.json`), Jest tests in `test/*.test.ts`, and the TypeScript build without clasp side effects.
 - **Logging review**: Reliant on console output for verifying pipeline stages (search results, OpenRouter responses, label operations).
 
 ## Gaps
