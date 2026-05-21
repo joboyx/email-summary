@@ -5,8 +5,8 @@
     "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
-    "types": ["jest", "node"],
+    "types": ["jest", "node", "google-apps-script"],
     "noEmit": true
   },
-  "include": ["test/**/*.ts"]
+  "include": ["test/**/*.ts", "test/support/gas-globals.d.ts", "src/types.d.ts"]
 }
