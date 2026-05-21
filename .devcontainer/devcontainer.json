@@ -4,10 +4,7 @@
   "postCreateCommand": "npm install",
   "customizations": {
     "vscode": {
-      "extensions": [
-        "ms-vscode.vscode-json",
-        "esbenp.prettier-vscode"
-      ],
+      "extensions": ["ms-vscode.vscode-json", "esbenp.prettier-vscode"],
       "settings": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true
