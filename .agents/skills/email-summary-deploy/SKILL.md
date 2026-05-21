@@ -30,9 +30,11 @@ Run from the **email-summary** repository root (`npm` scripts assume this cwd).
 Execute in order:
 
 1. **Deploy**
+
    ```bash
    npm run deploy
    ```
+
    Capture output: Google Apps Script project URL and new deployment ID (numeric, from `clasp deploy`).
 
 2. **Trigger reminder (manual)**
@@ -42,10 +44,12 @@ Execute in order:
    Set `package.json` → `meta.activeDeploymentId` to the new deployment ID from step 1.
 
 4. **Clean up old deployments**
+
    ```bash
    npm run deployments:list
    npm run deployments:cleanup
    ```
+
    Show output from both commands.
 
 5. **Commit (only if asked)**

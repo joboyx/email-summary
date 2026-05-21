@@ -5,7 +5,9 @@
 /**
  * POST to OpenRouter chat/completions with 429 retry and structured error handling.
  */
-function fetchOpenRouterChatCompletion(payload: OpenRouterChatCompletionRequest): OpenRouterChatCompletionResponse {
+function fetchOpenRouterChatCompletion(
+  payload: OpenRouterChatCompletionRequest,
+): OpenRouterChatCompletionResponse {
   const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: "post",
     contentType: "application/json",
@@ -32,7 +34,7 @@ function fetchOpenRouterChatCompletion(payload: OpenRouterChatCompletionRequest)
       lastError = new Error(`OpenRouter returned non-JSON (HTTP ${status})`);
       if (status === 429 && attempt < OPENROUTER_MAX_RETRIES) {
         console.warn(
-          `OpenRouter HTTP 429 (attempt ${attempt}/${OPENROUTER_MAX_RETRIES}), retrying in ${OPENROUTER_RETRY_DELAY_MS}ms`
+          `OpenRouter HTTP 429 (attempt ${attempt}/${OPENROUTER_MAX_RETRIES}), retrying in ${OPENROUTER_RETRY_DELAY_MS}ms`,
         );
         Utilities.sleep(OPENROUTER_RETRY_DELAY_MS);
         continue;
@@ -45,10 +47,12 @@ function fetchOpenRouterChatCompletion(payload: OpenRouterChatCompletionRequest)
     const isRateLimited = status === 429 || json.error?.code === 429;
 
     if (isRateLimited) {
-      lastError = new Error(`OpenRouter rate limited: ${json.error?.message || text.substring(0, 200)}`);
+      lastError = new Error(
+        `OpenRouter rate limited: ${json.error?.message || text.substring(0, 200)}`,
+      );
       if (attempt < OPENROUTER_MAX_RETRIES) {
         console.warn(
-          `OpenRouter 429 (attempt ${attempt}/${OPENROUTER_MAX_RETRIES}), retrying in ${OPENROUTER_RETRY_DELAY_MS}ms`
+          `OpenRouter 429 (attempt ${attempt}/${OPENROUTER_MAX_RETRIES}), retrying in ${OPENROUTER_RETRY_DELAY_MS}ms`,
         );
         Utilities.sleep(OPENROUTER_RETRY_DELAY_MS);
         continue;
@@ -58,7 +62,7 @@ function fetchOpenRouterChatCompletion(payload: OpenRouterChatCompletionRequest)
 
     if (json.error) {
       throw new Error(
-        `OpenRouter error ${json.error.code || status}: ${json.error.message || JSON.stringify(json.error)}`
+        `OpenRouter error ${json.error.code || status}: ${json.error.message || JSON.stringify(json.error)}`,
       );
     }
 
@@ -89,13 +93,14 @@ function summarizeEmails(emails: EmailInput[]): EmailSummary[] {
 
   if (!OPENROUTER_API_KEY) {
     throw new Error(
-      "OPENROUTER_API_KEY script property is not set. Add it in Apps Script > Project Settings > Script properties."
+      "OPENROUTER_API_KEY script property is not set. Add it in Apps Script > Project Settings > Script properties.",
     );
   }
 
   emails.forEach((email) => {
     const categoryList = EMAIL_CATEGORIES.map(
-      (cat) => `  - name: ${cat.name}\n    emoji: ${cat.emoji}\n    description: ${cat.description}`
+      (cat) =>
+        `  - name: ${cat.name}\n    emoji: ${cat.emoji}\n    description: ${cat.description}`,
     ).join("\n");
 
     const payload: OpenRouterChatCompletionRequest = {
@@ -155,7 +160,7 @@ function summarizeEmails(emails: EmailInput[]): EmailSummary[] {
       const validEmojis = EMAIL_CATEGORIES.map((cat) => cat.emoji);
       if (!validEmojis.includes(emoji)) {
         console.warn(
-          `Invalid emoji detected in summary: ${summary.summary}. Expected one of: ${validEmojis.join(", ")}`
+          `Invalid emoji detected in summary: ${summary.summary}. Expected one of: ${validEmojis.join(", ")}`,
         );
         summary.summary = "⚠️ Invalid emoji detected. Please review.";
       }
