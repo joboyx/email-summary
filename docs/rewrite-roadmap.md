@@ -1,26 +1,27 @@
 # Rewrite Roadmap
 
 ## Drivers for Rewrite
-- Single-file script (`Code.js`) mixes orchestration, API integration, and presentation logic.
+- ~~Single-file script (`Code.js`) mixes orchestration, API integration, and presentation logic.~~ **Addressed (JBY-023)**: code split into `src/` modules.
 - Tight coupling to LLM response format (string parsing) increases fragility.
 - Lack of automated tests or mocks makes regression detection difficult.
 - Manual deployment and trigger management steps are error-prone.
 
 ## Goals
-1. Modularize codebase (separate data access, AI integration, templating, and Gmail actions).
+1. ~~Modularize codebase (separate data access, AI integration, templating, and Gmail actions).~~ **Done (JBY-023)** — see `docs/architecture.md` for module map.
 2. Introduce structured data contracts (e.g., JSON responses from OpenRouter) to simplify parsing.
 3. Establish testing harness with mocked services and automated verification.
 4. Improve configurability (externalize flags, support per-user settings).
 5. Streamline deployment and monitoring (scripts, dashboards, alerting).
 
 ## Proposed Phases
-1. **Assessment (Current Stage)**
+1. **Assessment (Complete)**
    - Complete documentation of existing behavior (this doc set).
    - Identify critical metrics (daily volume, failure rates) via logs.
-2. **Foundation**
-   - Extract configuration into dedicated module and external config files.
-   - Create lightweight wrapper classes for Gmail and OpenRouter interactions.
-   - Add unit tests for pure functions (date filtering, HTML formatting).
+2. **Foundation (Partial — JBY-023)**
+   - ~~Extract configuration into dedicated module~~ — `src/config.js`.
+   - ~~Create lightweight wrapper classes for Gmail and OpenRouter interactions~~ — `src/gmail-search.js`, `src/openrouter.js`, `src/gmail-actions.js`.
+   - Add unit tests for pure functions (date filtering, HTML formatting). **Deferred**
+   - External config files. **Deferred**
 3. **Enhancements**
    - Migrate to structured OpenRouter responses (`response_format: { type: "json_object" }`).
    - Implement error retries/backoff and better logging/monitoring.

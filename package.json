@@ -1,7 +1,7 @@
 {
   "name": "email-summary",
   "version": "1.0.0",
-  "main": "Code.js",
+  "main": "src/main.js",
   "scripts": {
     "setup": "npm run setup:global && npm run setup:local",
     "setup:global": "clasp login",

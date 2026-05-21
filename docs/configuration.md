@@ -1,6 +1,6 @@
 # Configuration Reference
 
-## Runtime Flags (Code.js)
+## Runtime Flags (`src/config.js`)
 - `EMAIL_SEND_ENABLED` (default `true`): Enables sending the digest email. Set to `false` during testing to dry-run the pipeline.
 - `EMAIL_ARCHIVE_ENABLED` (default `true`): Determines whether processed threads are archived.
 - `EMAIL_LABEL_ENABLED` (default `true`): Controls whether action-required labels are added.
@@ -15,7 +15,7 @@
 ## Script Properties
 - `OPENROUTER_API_KEY`: Required for authenticating to the OpenRouter API. Configure via Apps Script UI (`Project Settings > Script properties`). Remove legacy `OPENAI_API_KEY` after migration.
 
-## Apps Script Project Settings (`appsscript.json`)
+## Apps Script Project Settings (`src/appsscript.json`)
 - `timeZone`: `Asia/Manila` (affects trigger scheduling and date calculations).
 - `dependencies.enabledAdvancedServices`: Enables Gmail advanced service (not directly used in code but available).
 - `exceptionLogging`: `STACKDRIVER` (routes logs to Stackdriver).
@@ -35,7 +35,7 @@
 - `meta.activeDeploymentId`: Track the deployment number currently bound to triggers (must be updated manually post-deploy).
 
 ## External Files
-- `.clasp.json`: Contains `projectId`, `scriptId`, and `rootDir` (not committed).
+- `.clasp.json`: Contains `projectId`, `scriptId`, and `rootDir` (set to `src/`; not committed).
 - `credentials.json`: Desktop OAuth client for **local** clasp login (`setup:local`); not in repo.
 - `~/.clasprc.json`: **Global** clasp auth for push, pull, deploy (`setup:global`); not in repo.
 - `./.clasprc.json`: **Local** clasp auth for `clasp run` / `npm start`; not in repo.
