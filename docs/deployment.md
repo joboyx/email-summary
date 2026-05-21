@@ -5,7 +5,7 @@
 - `@google/clasp` dev dependency installed (`npm install`).
 - Google OAuth credentials stored at `credentials.json` (downloaded from Google Cloud console).
 - `.clasp.json` configured with correct `projectId`, `scriptId`, and `rootDir`.
-- Script property `OPENAI_API_KEY` set in the Apps Script project settings.
+- Script property `OPENROUTER_API_KEY` set in the Apps Script project settings (remove legacy `OPENAI_API_KEY` after migration).
 
 ## Initial Setup
 ```bash
@@ -32,6 +32,8 @@ This executes:
 2. Open the Apps Script editor, navigate to Triggers, delete the existing time-based trigger, and create a new one pointing to the latest deployment (`summarizeAndSendDailyEmail`).
 3. Update `package.json` → `meta.activeDeploymentId` with the deployment number displayed in the deploy output.
 4. Commit and push the change to `package.json` to record the active deployment.
+
+**OpenRouter migration:** Ensure `OPENROUTER_API_KEY` is set in script properties before deploying. Remove `OPENAI_API_KEY` after verifying a successful run.
 
 ## Testing the Deployment
 ```bash

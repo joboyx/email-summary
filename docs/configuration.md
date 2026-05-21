@@ -6,14 +6,14 @@
 - `EMAIL_LABEL_ENABLED` (default `true`): Controls whether action-required labels are added.
 - `EMAIL_SEARCH_PREVIOUS_DAYS` (default `1`): Number of days back to include in the Gmail search.
 - `EMAIL_SEARCH_RESULT_LIMIT` (default `undefined`): Maximum number of threads processed. Leave `undefined` for no limit.
-- `EMAIL_MAX_CONTENT_LENGTH` (`500000`): Maximum characters from each message forwarded to OpenAI.
+- `EMAIL_MAX_CONTENT_LENGTH` (`1_000_000`): Maximum characters from each message forwarded to OpenRouter.
 - `EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE` (`["personal"]`): Categories exempted from archiving.
 - `EMAIL_LABEL_ROOT` (`"🤖 EmailSummary"`): Root label name for auto-created labels.
 - `EMAIL_LABEL_ACTION_REQUIRED` (derived): Full label applied when action items exist.
-- `OPENAI_MODEL` (`"gpt-5.5"`), `OPENAI_MAX_TOKENS` (`50000`): Model and token budget for chat completions.
+- `OPENROUTER_MODEL` (`"~openai/gpt-latest"`), `OPENAI_MAX_TOKENS` (`500_000`): Model alias and completion token budget for chat completions.
 
 ## Script Properties
-- `OPENAI_API_KEY`: Required for authenticating to the OpenAI API. Configure via Apps Script UI (`Project Settings > Script properties`).
+- `OPENROUTER_API_KEY`: Required for authenticating to the OpenRouter API. Configure via Apps Script UI (`Project Settings > Script properties`). Remove legacy `OPENAI_API_KEY` after migration.
 
 ## Apps Script Project Settings (`appsscript.json`)
 - `timeZone`: `Asia/Manila` (affects trigger scheduling and date calculations).
