@@ -26,7 +26,7 @@
   },
   "meta": {
     "_activeDeploymentVersion": "Apps Script deployment version (@N). UI trigger binds to this; auto-updated by npm run deploy.",
-    "activeDeploymentVersion": 80
+    "activeDeploymentVersion": 81
   },
   "author": "",
   "license": "UNLICENSED",
