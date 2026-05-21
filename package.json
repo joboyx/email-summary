@@ -1,17 +1,19 @@
 {
   "name": "email-summary",
   "version": "1.0.0",
-  "main": "src/main.js",
+  "main": "dist/main.js",
   "scripts": {
+    "build": "node scripts/build.mjs",
+    "clean": "rm -rf dist",
     "setup": "npm run setup:global && npm run setup:local",
     "setup:global": "clasp login",
     "setup:local": "clasp login --creds credentials.json",
     "auth:status": "clasp login --status",
-    "start": "clasp run summarizeAndSendDailyEmail",
-    "test": "clasp push --force && clasp deploy && clasp run summarizeAndSendDailyEmail",
+    "start": "npm run build && clasp run summarizeAndSendDailyEmail",
+    "test": "npm run build && clasp push --force && clasp deploy && clasp run summarizeAndSendDailyEmail",
     "watch": "clasp logs --watch",
     "watch:open": "clasp logs --open",
-    "deploy": "clasp push --force && clasp deploy && echo 'Deployed successfully! Delete the old trigger and create a new one with this new version.' && echo 'https://script.google.com/home/projects/18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0/edit'",
+    "deploy": "npm run build && clasp push --force && clasp deploy && echo 'Deployed successfully! Delete the old trigger and create a new one with this new version.' && echo 'https://script.google.com/home/projects/18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0/edit'",
     "deployments:list": "clasp deployments",
     "deployments:cleanup": "(clasp deployments | grep -v @$(cat package.json | jq .meta.activeDeploymentId) | grep -v @HEAD | grep \"\\- \" | cut -d' ' -f2 | xargs -I {} clasp undeploy {}) && clasp deployments"
   },
@@ -23,6 +25,8 @@
   "license": "UNLICENSED",
   "description": "",
   "devDependencies": {
-    "@google/clasp": "^2.4.2"
+    "@google/clasp": "^2.4.2",
+    "@types/google-apps-script": "^1.0.100",
+    "typescript": "^5.8.3"
   }
 }

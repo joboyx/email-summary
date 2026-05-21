@@ -4,11 +4,9 @@
 
 /**
  * POST to OpenRouter chat/completions with 429 retry and structured error handling.
- * @param {Object} payload Chat completions request body.
- * @returns {Object} Parsed completion JSON with choices[0].message.content.
  */
-function fetchOpenRouterChatCompletion(payload) {
-  const options = {
+function fetchOpenRouterChatCompletion(payload: OpenRouterChatCompletionRequest): OpenRouterChatCompletionResponse {
+  const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: "post",
     contentType: "application/json",
     muteHttpExceptions: true,
@@ -20,20 +18,22 @@ function fetchOpenRouterChatCompletion(payload) {
     payload: JSON.stringify(payload),
   };
 
-  let lastError = null;
+  let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= OPENROUTER_MAX_RETRIES; attempt++) {
     const response = UrlFetchApp.fetch(OPENROUTER_API_URL, options);
     const status = response.getResponseCode();
     const text = response.getContentText();
-    let json;
+    let json: OpenRouterChatCompletionResponse;
 
     try {
-      json = JSON.parse(text);
-    } catch (parseError) {
+      json = JSON.parse(text) as OpenRouterChatCompletionResponse;
+    } catch {
       lastError = new Error(`OpenRouter returned non-JSON (HTTP ${status})`);
       if (status === 429 && attempt < OPENROUTER_MAX_RETRIES) {
-        console.warn(`OpenRouter HTTP 429 (attempt ${attempt}/${OPENROUTER_MAX_RETRIES}), retrying in ${OPENROUTER_RETRY_DELAY_MS}ms`);
+        console.warn(
+          `OpenRouter HTTP 429 (attempt ${attempt}/${OPENROUTER_MAX_RETRIES}), retrying in ${OPENROUTER_RETRY_DELAY_MS}ms`
+        );
         Utilities.sleep(OPENROUTER_RETRY_DELAY_MS);
         continue;
       }
@@ -47,7 +47,9 @@ function fetchOpenRouterChatCompletion(payload) {
     if (isRateLimited) {
       lastError = new Error(`OpenRouter rate limited: ${json.error?.message || text.substring(0, 200)}`);
       if (attempt < OPENROUTER_MAX_RETRIES) {
-        console.warn(`OpenRouter 429 (attempt ${attempt}/${OPENROUTER_MAX_RETRIES}), retrying in ${OPENROUTER_RETRY_DELAY_MS}ms`);
+        console.warn(
+          `OpenRouter 429 (attempt ${attempt}/${OPENROUTER_MAX_RETRIES}), retrying in ${OPENROUTER_RETRY_DELAY_MS}ms`
+        );
         Utilities.sleep(OPENROUTER_RETRY_DELAY_MS);
         continue;
       }
@@ -55,7 +57,9 @@ function fetchOpenRouterChatCompletion(payload) {
     }
 
     if (json.error) {
-      throw new Error(`OpenRouter error ${json.error.code || status}: ${json.error.message || JSON.stringify(json.error)}`);
+      throw new Error(
+        `OpenRouter error ${json.error.code || status}: ${json.error.message || JSON.stringify(json.error)}`
+      );
     }
 
     if (status < 200 || status >= 300) {
@@ -72,26 +76,34 @@ function fetchOpenRouterChatCompletion(payload) {
   throw lastError || new Error("OpenRouter request failed after retries");
 }
 
-function summarizeEmails(emails) {
-  const summaries = [];
+function parseSummaryLine(lines: string[], prefix: string): string {
+  const line = lines.find((l) => l.startsWith(prefix));
+  if (!line) {
+    throw new Error(`OpenRouter response missing line starting with "${prefix}"`);
+  }
+  return line.slice(prefix.length).trim();
+}
+
+function summarizeEmails(emails: EmailInput[]): EmailSummary[] {
+  const summaries: EmailSummary[] = [];
 
   if (!OPENROUTER_API_KEY) {
-    throw new Error("OPENROUTER_API_KEY script property is not set. Add it in Apps Script > Project Settings > Script properties.");
+    throw new Error(
+      "OPENROUTER_API_KEY script property is not set. Add it in Apps Script > Project Settings > Script properties."
+    );
   }
 
-  emails.forEach(email => {
-    // Convert EMAIL_CATEGORIES to YAML format
-    const categoryList = EMAIL_CATEGORIES.map(cat =>
-      `  - name: ${cat.name}\n    emoji: ${cat.emoji}\n    description: ${cat.description}`
-    ).join('\n');
+  emails.forEach((email) => {
+    const categoryList = EMAIL_CATEGORIES.map(
+      (cat) => `  - name: ${cat.name}\n    emoji: ${cat.emoji}\n    description: ${cat.description}`
+    ).join("\n");
 
-    const payload = {
+    const payload: OpenRouterChatCompletionRequest = {
       model: OPENROUTER_MODEL,
       messages: [
         {
           role: "user",
-          content:
-            `
+          content: `
             Summarize the following email, categorize it, and determine if there's any action item for the recipient:
               subject: ${email.subject}
               from: ${email.from}
@@ -121,8 +133,8 @@ function summarizeEmails(emails) {
               category: <category-list.name>
               summary: <category-list.emoji> <short summary>
               actionItem: <only if there's a valid action item based on guidelines above; otherwise "None">
-            `
-        }
+            `,
+        },
       ],
       max_completion_tokens: OPENROUTER_MAX_TOKENS,
       reasoning: { effort: "low", exclude: true },
@@ -130,21 +142,22 @@ function summarizeEmails(emails) {
 
     try {
       const json = fetchOpenRouterChatCompletion(payload);
-      const summaryText = json.choices[0].message.content.split('\n');
+      const summaryText = json.choices![0].message!.content!.split("\n");
 
-      const summary = {
+      const summary: EmailSummary = {
         ...email,
-        summary: summaryText.find(line => line.startsWith("summary:")).replace("summary: ", "").trim(),
-        category: summaryText.find(line => line.startsWith("category:")).replace("category: ", "").trim(),
-        actionItem: summaryText.find(line => line.startsWith("actionItem:")).replace("actionItem: ", "").trim(),
+        summary: parseSummaryLine(summaryText, "summary:"),
+        category: parseSummaryLine(summaryText, "category:"),
+        actionItem: parseSummaryLine(summaryText, "actionItem:"),
       };
 
-      // Validate the emoji in the summary
-      const emoji = summary.summary.split(' ')[0];
-      const validEmojis = EMAIL_CATEGORIES.map(cat => cat.emoji);
+      const emoji = summary.summary.split(" ")[0];
+      const validEmojis = EMAIL_CATEGORIES.map((cat) => cat.emoji);
       if (!validEmojis.includes(emoji)) {
-        console.warn(`Invalid emoji detected in summary: ${summary.summary}. Expected one of: ${validEmojis.join(', ')}`);
-        summary.summary = `⚠️ Invalid emoji detected. Please review.`;
+        console.warn(
+          `Invalid emoji detected in summary: ${summary.summary}. Expected one of: ${validEmojis.join(", ")}`
+        );
+        summary.summary = "⚠️ Invalid emoji detected. Please review.";
       }
 
       summaries.push(summary);
@@ -157,7 +170,7 @@ function summarizeEmails(emails) {
     const categoryComparison = a.category.localeCompare(b.category);
 
     if (categoryComparison === 0) {
-      return new Date(b.messageDate) - new Date(a.messageDate);
+      return new Date(b.messageDate).getTime() - new Date(a.messageDate).getTime();
     }
 
     return categoryComparison;

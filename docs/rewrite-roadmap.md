@@ -18,8 +18,9 @@
    - Complete documentation of existing behavior (this doc set).
    - Identify critical metrics (daily volume, failure rates) via logs.
 2. **Foundation (Partial — JBY-023)**
-   - ~~Extract configuration into dedicated module~~ — `src/config.js`.
-   - ~~Create lightweight wrapper classes for Gmail and OpenRouter interactions~~ — `src/gmail-search.js`, `src/openrouter.js`, `src/gmail-actions.js`.
+   - ~~Extract configuration into dedicated module~~ — `src/config.ts`.
+   - ~~Create lightweight wrapper classes for Gmail and OpenRouter interactions~~ — `src/gmail-search.ts`, `src/openrouter.ts`, `src/gmail-actions.ts`.
+   - ~~TypeScript conversion with build output to `dist/`~~ — typed contracts in `src/types.d.ts`; clasp deploys compiled JS.
    - Add unit tests for pure functions (date filtering, HTML formatting). **Deferred**
    - External config files. **Deferred**
 3. **Enhancements**
