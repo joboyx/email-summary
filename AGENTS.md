@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Google Apps Script that automatically summarizes daily emails using OpenAI's API and sends a formatted summary to the user. The script categorizes emails, identifies action items, and can automatically archive threads and add labels based on configurable rules.
+This is a Google Apps Script that automatically summarizes daily emails using OpenRouter (OpenAI-compatible chat completions) and sends a formatted summary to the user. The script categorizes emails, identifies action items, and can automatically archive threads and add labels based on configurable rules.
 
 ## Technology Stack
 
 - **Runtime**: Google Apps Script (V8 runtime) ⚙️
 - **Language**: JavaScript (ES6+)
-- **APIs**: Gmail API, OpenAI API (GPT-5.5), Google Script Services
+- **APIs**: Gmail API, OpenRouter API (`~openai/gpt-latest`), Google Script Services
 - **Deployment**: Google clasp CLI tool
 - **Node Version**: v22 (see `.nvmrc`)
 
@@ -19,12 +19,12 @@ This is a Google Apps Script that automatically summarizes daily emails using Op
 ### Core Architecture
 - **Single File Structure**: All code is contained in `Code.js` for simplicity
 - **Configuration-driven**: Debug flags at the top of the file control behavior
-- **AI-powered Categorization**: Uses OpenAI API to categorize and summarize emails
+- **AI-powered Categorization**: Uses OpenRouter to categorize and summarize emails
 - **Gmail Integration**: Uses Gmail API for email processing, archiving, and labeling
 
 ### Email Processing Pipeline
 1. **Email Retrieval**: Searches inbox for emails from the last N days
-2. **AI Summarization**: Each email is processed by OpenAI to generate category, summary, and action items
+2. **AI Summarization**: Each email is processed by OpenRouter to generate category, summary, and action items
 3. **Summary Generation**: Creates HTML-formatted email with categorized summaries
 4. **Email Delivery**: Sends summary email to user
 5. **Post-processing**: Archives threads and adds labels based on rules
@@ -97,7 +97,7 @@ OAuth 2.0 credentials file from Google Cloud Console for desktop application.
 
 ### Script Properties
 Set in Google Apps Script > Settings > Script properties:
-- `OPENAI_API_KEY`: Your OpenAI API key for GPT access
+- `OPENROUTER_API_KEY`: Your OpenRouter API key for GPT access via `~openai/gpt-latest`
 
 ## Email Categories System
 
@@ -128,10 +128,10 @@ The script uses a predefined categorization system with emojis:
 - Automatically archives processed emails (except personal category)
 - Configurable categories to skip archiving via `EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE`
 
-## OpenAI Integration
+## OpenRouter Integration
 
 ### AI Prompt Structure
-The script sends structured prompts to OpenAI with:
+The script sends structured prompts to OpenRouter with:
 - Email subject and content
 - Category definitions in YAML format
 - Specific guidelines for categorization and action item detection
