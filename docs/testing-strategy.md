@@ -6,18 +6,28 @@
 - **Local verification (`npm test`)**: Runs ESLint with `--max-warnings=0`, `type-coverage` on `src/` (100% threshold via `tsconfig.json`), Jest tests in `test/*.test.ts`, and the TypeScript build without clasp side effects.
 - **Logging review**: Reliant on console output for verifying pipeline stages (search results, OpenRouter responses, label operations).
 
+## Local Unit Tests (`test/`)
+
+Jest runs against a VM sandbox that transpiles `src/` modules in Apps Script load order. Gmail, UrlFetch, MailApp, PropertiesService, and related services are stubbed in `test/support/gas-mocks.ts`.
+
+| Area | Coverage |
+|------|----------|
+| Gmail search | `getSearchStringForLastNDays`, `getPreviousDayEmails` (date window filtering) |
+| OpenRouter | `parseSummaryLine`, `fetchOpenRouterChatCompletion` (429 retry), `summarizeEmails` |
+| HTML / Gmail actions | `formatSummariesAsHTML`, `sendSummaryEmail`, `archiveThreads`, `addLabels`, `getOrCreateLabel` |
+| Orchestration | `summarizeAndSendDailyEmail` happy path and missing API key failure |
+
 ## Gaps
 
-- Only a placeholder Jest test exists; there are no real unit or integration tests for helper functions (`getPreviousDayEmails`, `summarizeEmails`, etc.).
-- No mocking of OpenRouter or Gmail APIs; behavior depends on live services.
-- No automated regression suite for HTML rendering or label management.
+- No end-to-end test against live Gmail or OpenRouter (`npm start` remains the integration path).
+- HTML output is asserted with string checks, not snapshot tests.
+- No dry-run mode that logs archive/label actions without modifying Gmail.
 
-## Suggested Enhancements (for rewrite)
+## Suggested Enhancements
 
-1. Expand the local test harness with stubbed Gmail/UrlFetch responses.
-2. Add contract tests for OpenRouter prompt/response parsing to guard against format drift.
-3. Validate HTML output structure with snapshot-style tests.
-4. Provide a dry-run mode that logs actions without modifying Gmail (archiving, labeling) for safer manual tests.
+1. Add snapshot-style tests for HTML digest structure.
+2. Provide a dry-run mode that logs actions without modifying Gmail (archiving, labeling) for safer manual tests.
+3. Add timezone-edge-case coverage for date-window logic (Apps Script runs in `Asia/Manila`).
 
 ## Pre-Deploy Checklist
 
