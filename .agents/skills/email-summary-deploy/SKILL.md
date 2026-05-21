@@ -47,8 +47,8 @@ Execute in order:
 
    Show output from both commands. Cleanup keeps the deployment at `activeDeploymentVersion` and `@HEAD`.
 
-3. **Commit (only if asked)**
-   If the user wants the version tracked in git:
+3. **Commit**
+   After deploy and cleanup, commit the updated `activeDeploymentVersion`:
    ```bash
    git add package.json
    git commit -m "chore(deploy): update activeDeploymentVersion to <VERSION>"
@@ -64,6 +64,7 @@ The daily trigger is created once in Apps Script UI, bound to `meta.activeDeploy
 - Production config validated in `src/config.ts`
 - `npm run deploy` succeeded (tests passed, redeploy in place, `activeDeploymentVersion` auto-updated)
 - Old deployments cleaned up (when cleanup step run)
+- `package.json` committed with updated `activeDeploymentVersion`
 
 ## Error handling
 
