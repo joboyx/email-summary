@@ -56,10 +56,13 @@ To set up the project, follow these steps:
 
    See [docs/clasp-auth.md](docs/clasp-auth.md) for `invalid_grant`, WSL/headless, and `setup:local` exiting with code 1 after credentials are saved.
 
-5. Set the OpenAI API key in Apps Script:
+5. Set the OpenRouter API key in Apps Script:
 
    - Open the [script editor](https://script.google.com/home/projects/18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0/edit) → **Project Settings** → **Script properties**
-   - Add `OPENAI_API_KEY` with your OpenAI API key
+   - Add `OPENROUTER_API_KEY` with your OpenRouter API key ([openrouter.ai/keys](https://openrouter.ai/keys))
+   - Remove legacy `OPENAI_API_KEY` if present
+
+   **Migration note:** Set `OPENROUTER_API_KEY` before deploying code that reads it; the script fails fast if the property is missing.
 
 6. Deploy the script:
 
