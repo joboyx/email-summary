@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "Code.js",
   "scripts": {
-    "setup": "clasp login --creds credentials.json",
+    "setup": "npm run setup:global && npm run setup:local",
+    "setup:global": "clasp login",
+    "setup:local": "clasp login --creds credentials.json",
+    "auth:status": "clasp login --status",
     "start": "clasp run summarizeAndSendDailyEmail",
     "test": "clasp push --force && clasp deploy && clasp run summarizeAndSendDailyEmail",
     "watch": "clasp logs --watch",

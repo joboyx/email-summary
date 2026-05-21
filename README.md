@@ -37,21 +37,38 @@ To set up the project, follow these steps:
 
    - Ensure you have a `credentials.json` file for Google API access. This file should be obtained from the Google Cloud Console > Credentials > OAuth 2.0 Client IDs > Desktop App > Download JSON.
 
-4. Set up Google Apps Script:
+4. Authenticate with clasp (two logins required):
 
-   - Log in to clasp with your Google account, this would generate a `.clasprc.json` file:
-     ```bash
-     npm run setup
-     ```
+   Clasp keeps **global** and **local** credentials separately. Push, pull, and deploy use global auth (`~/.clasprc.json`). `clasp run` / `npm start` use local auth (`./.clasprc.json` from your `credentials.json`).
 
-5. Deploy the script:
+   ```bash
+   npm run setup          # runs setup:global, then setup:local (browser sign-in each)
+   npm run auth:status    # confirm global login (prints your Google account)
+   npx clasp pull         # optional: confirm push/pull auth works
+   ```
+
+   To refresh tokens later:
+
+   ```bash
+   npm run setup:global   # push, pull, deploy, logs
+   npm run setup:local    # npm start / clasp run only
+   ```
+
+   See [docs/clasp-auth.md](docs/clasp-auth.md) for `invalid_grant`, WSL/headless, and `setup:local` exiting with code 1 after credentials are saved.
+
+5. Set the OpenAI API key in Apps Script:
+
+   - Open the [script editor](https://script.google.com/home/projects/18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0/edit) → **Project Settings** → **Script properties**
+   - Add `OPENAI_API_KEY` with your OpenAI API key
+
+6. Deploy the script:
 
    - Push and deploy the script:
      ```bash
      npm run deploy
      ```
 
-6. Create a trigger for the script to run daily:
+7. Create a trigger for the script to run daily:
    - Go to the Apps Script editor
    - Click on the clock icon on the left sidebar to open the triggers page
    - Click on `+ Add Trigger`
@@ -134,5 +151,6 @@ This runs the scripted flow described in [the deployment helper](.claude/command
 
 ## References
 
-- For more information on `clasp`, visit the [clasp GitHub repository](https://github.com/google/clasp).
-- Detailed instructions on running scripts can be found in the [clasp run documentation](https://github.com/google/clasp/blob/master/docs/run.md).
+- [Clasp authentication (this project)](docs/clasp-auth.md) — global vs local credentials, troubleshooting
+- [clasp GitHub repository](https://github.com/google/clasp)
+- [clasp run documentation](https://github.com/google/clasp/blob/master/docs/run.md)
