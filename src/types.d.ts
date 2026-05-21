@@ -47,7 +47,7 @@ interface OpenRouterErrorBody {
 }
 
 interface OpenRouterChatCompletionResponse {
-  choices?: Array<{ message?: { content?: string } }>;
+  choices?: { message?: { content?: string } }[];
   error?: OpenRouterErrorBody;
 }
 

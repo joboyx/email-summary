@@ -2,6 +2,11 @@
  * Gmail search string construction and message retrieval/normalization.
  */
 
+/**
+ * Build a Gmail `after:` search fragment for messages on or after the date N days ago.
+ * @param n Number of days before today to start the search window.
+ * @returns Gmail search date clause, e.g. `after:2026/05/21`.
+ */
 function getSearchStringForLastNDays(n: number): string {
   const today = new Date();
   const nDaysAgo = new Date(today);
@@ -15,6 +20,10 @@ function getSearchStringForLastNDays(n: number): string {
   return `after:${formattedDate}`;
 }
 
+/**
+ * Search inbox for recent threads and normalize matching messages into pipeline inputs.
+ * @returns Email payloads ready for OpenRouter summarization.
+ */
 function getPreviousDayEmails(): EmailInput[] {
   const searchString = `in:inbox ${getSearchStringForLastNDays(EMAIL_SEARCH_PREVIOUS_DAYS)} -subject:"${EMAIL_SUBJECT.split(' for')[0]}"`;
   console.log('searchString: ', searchString);

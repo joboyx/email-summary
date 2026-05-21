@@ -40,6 +40,7 @@
     "@types/google-apps-script": "^1.0.100",
     "@types/jest": "^30.0.0",
     "eslint": "^10.4.0",
+    "eslint-plugin-jsdoc": "^63.0.0",
     "husky": "^9.1.7",
     "jest": "^30.4.2",
     "lint-staged": "^17.0.5",

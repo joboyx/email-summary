@@ -2,6 +2,10 @@
  * Gmail side effects: send digest, archive threads, apply labels, and label cache.
  */
 
+/**
+ * Send the formatted digest to the configured recipient when sending is enabled.
+ * @param formattedSummary HTML body produced by `formatSummariesAsHTML`.
+ */
 function sendSummaryEmail(formattedSummary: string): void {
   if (!EMAIL_SEND_ENABLED) {
     return;
@@ -16,6 +20,10 @@ function sendSummaryEmail(formattedSummary: string): void {
   MailApp.sendEmail(data);
 }
 
+/**
+ * Move summarized threads to archive when archiving is enabled and category allows it.
+ * @param emails Summaries whose threads may be archived.
+ */
 function archiveThreads(emails: EmailSummary[]): void {
   if (!EMAIL_ARCHIVE_ENABLED) {
     return;
@@ -34,6 +42,10 @@ function archiveThreads(emails: EmailSummary[]): void {
   }
 }
 
+/**
+ * Apply the action-required label to threads with a non-empty action item.
+ * @param emails Summaries whose threads may receive labels.
+ */
 function addLabels(emails: EmailSummary[]): void {
   if (!EMAIL_LABEL_ENABLED) {
     return;
@@ -52,8 +64,10 @@ function addLabels(emails: EmailSummary[]): void {
 const labelCache: Record<string, GoogleAppsScript.Gmail.GmailLabel> = {};
 
 /**
- * Get or create a label. Supported nested labels.
- * Auto-creates labels in every level
+ * Get or create a label, including nested paths such as `Root/Child`.
+ * Auto-creates missing labels at each path segment and caches lookups.
+ * @param labelName Gmail label name, optionally nested with `/` separators.
+ * @returns Existing or newly created Gmail label.
  */
 function getOrCreateLabel(labelName: string): GoogleAppsScript.Gmail.GmailLabel {
   if (labelCache[labelName]) {
@@ -82,7 +96,9 @@ function getOrCreateLabel(labelName: string): GoogleAppsScript.Gmail.GmailLabel 
 }
 
 /**
- * Explain the email in a human-readable format
+ * Format summary metadata for structured log lines.
+ * @param email Summarized email whose identifiers should be logged.
+ * @returns Single-line diagnostic string for archive and label logs.
  */
 function explainEmail(email: EmailSummary): string {
   return `threadId[${email.threadId}] messageId[${email.messageId}] link[${email.link}] subject[${email.subject}] category[${email.category}] actionItem[${email.actionItem}]`;
