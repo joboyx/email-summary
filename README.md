@@ -16,7 +16,6 @@ To set up the project, follow these steps:
    ```
 
 2. Install dependencies:
-
    - Use `nvm` to install `node` and `npm`
      ```bash
      nvm install
@@ -24,14 +23,13 @@ To set up the project, follow these steps:
      ```
 
 3. Set up configuration files:
-
    - Create a `.clasp.json` file with your project details:
 
      ```json
      {
        "projectId": "emailsummary-438014",
        "scriptId": "18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0",
-       "rootDir": "~/workspace/email-summary"
+       "rootDir": "~/workspace/personal/email-summary/dist"
      }
      ```
 
@@ -57,29 +55,35 @@ To set up the project, follow these steps:
    See [docs/clasp-auth.md](docs/clasp-auth.md) for `invalid_grant`, WSL/headless, and `setup:local` exiting with code 1 after credentials are saved.
 
 5. Set the OpenRouter API key in Apps Script:
-
    - Open the [script editor](https://script.google.com/home/projects/18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0/edit) → **Project Settings** → **Script properties**
    - Add `OPENROUTER_API_KEY` with your OpenRouter API key ([openrouter.ai/keys](https://openrouter.ai/keys))
    - Remove legacy `OPENAI_API_KEY` if present
 
    **Migration note:** Set `OPENROUTER_API_KEY` before deploying code that reads it; the script fails fast if the property is missing.
 
-6. Deploy the script:
-
+6. Build and deploy the script:
+   - Compile TypeScript to `dist/` (also runs automatically before push/run/deploy scripts):
+     ```bash
+     npm run build
+     ```
    - Push and deploy the script:
      ```bash
      npm run deploy
      ```
 
-7. Create a trigger for the script to run daily:
-   - Go to the Apps Script editor
-   - Click on the clock icon on the left sidebar to open the triggers page
-   - Click on `+ Add Trigger`
-   - Select `summarizeAndSendDailyEmail` from the function dropdown
-   - Select `Time-driven` from the `Event source` dropdown
-   - Select `Day timer` from the `Type of time` dropdown
-   - Select `5 to 6am` from the `Time of day` dropdown
-   - Select `Notify me immediately` from the `Failure notification settings` dropdown
+   **Note:** Set `.clasp.json` `rootDir` to `dist/`, not `src/`. Source lives in `src/` as `.ts` files; clasp uploads compiled output from `dist/`.
+
+7. Create a trigger for the script to run daily (**one-time setup**):
+
+   `npm run deploy` updates the fixed deployment in place; the trigger does **not** need to be recreated after each deploy. Set it up once:
+
+   - Go to the Apps Script editor → Triggers → **Add Trigger**
+   - Function: `summarizeAndSendDailyEmail`
+   - Deployment: Version `@N` matching `meta.activeDeploymentVersion` in `package.json` (see `npm run deployments:list`)
+   - Event source: Time-driven → Day timer → 5am to 6am
+   - Failure notification: **Notify me immediately**
+
+   Delete any existing Head-bound trigger before creating this one.
 
 ## Usage
 
@@ -89,7 +93,7 @@ To run the script and send the daily email summary, use the following command:
 npm start
 ```
 
-To test the script, which includes pushing, deploying, and running it, use:
+To run local verification (lint with zero warnings, type coverage, Jest tests in `test/`, and build), use:
 
 ```bash
 npm test
@@ -112,9 +116,11 @@ npm run watch:open
 After making local changes and testing, follow these steps to deploy to production:
 
 ### Pre-deployment Checklist
-- Ensure all debug configuration values in `Code.js` are set to their default production values:
+
+- Run `npm run build` so `dist/` matches `src/`.
+- Ensure all debug configuration values in `src/config.ts` are set to their default production values:
   - `EMAIL_SEND_ENABLED = true`
-  - `EMAIL_ARCHIVE_ENABLED = true` 
+  - `EMAIL_ARCHIVE_ENABLED = true`
   - `EMAIL_LABEL_ENABLED = true`
   - `EMAIL_SEARCH_PREVIOUS_DAYS = 1`
   - `EMAIL_SEARCH_RESULT_LIMIT = undefined`
@@ -125,32 +131,21 @@ After making local changes and testing, follow these steps to deploy to producti
    ```bash
    npm run deploy
    ```
-   
-2. **Update the trigger:** 
-   - Copy the Google Apps Script URL from the deploy output
-   - Open the URL and update/recreate the time-based trigger for the new deployment
+   Runs tests, pushes, redeploys in place, and updates `meta.activeDeploymentVersion` automatically.
 
-3. **Update deployment tracking:**
-   - Note the deployment ID from the deploy command output
-   - Update `package.json` → `meta.activeDeploymentId` with the new deployment number
+2. **Clean up old deployments (optional):**
 
-4. **Clean up old deployments:**
    ```bash
    npm run deployments:list
    npm run deployments:cleanup
    ```
 
-5. **Commit changes:**
-   Since `package.json` was updated with the new deployment ID, commit and push the changes to track the active deployment.
+3. **Commit (optional):**
+   Commit `package.json` if you want the updated `activeDeploymentVersion` tracked in git.
 
-### Quick Deployment Command
-The Claude Code CLI bundles an automated deployment helper. Launch the CLI and run the command:
-```bash
-claude
-claude> /project:deploy
-```
+### Automated deployment (agent skill)
 
-This runs the scripted flow described in [the deployment helper](.claude/commands/project/deploy.md). If you prefer to execute each step manually, follow the procedures in Deployment Steps and do it manually.
+Use the [email-summary-deploy](.agents/skills/email-summary-deploy/SKILL.md) skill in your AI agent (Cursor, Codex, Claude Code, etc.) to run the full flow: config validation, deploy, deployment ID update, cleanup, and optional commit. If you prefer to execute each step manually, follow the procedures in Deployment Steps above.
 
 ## References
 

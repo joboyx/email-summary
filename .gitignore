@@ -1,5 +1,5 @@
-# claude
-!.claude/
+# agent docs
+!.agents/
 !CLAUDE.md
 !AGENTS.md
 
@@ -9,3 +9,6 @@
 credentials.json
 
 node_modules/
+dist/
+coverage/
+test/.generated/
