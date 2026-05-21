@@ -30,12 +30,15 @@
 
 ## Node & Clasp Metadata (`package.json`)
 - `@google/clasp` pinned at `^2.4.2`.
-- Scripts for setup, deploy, testing, log streaming, deployment management.
+- `setup` / `setup:global` / `setup:local` / `auth:status`: clasp authentication (see [clasp-auth.md](clasp-auth.md)).
+- Scripts for deploy, testing, log streaming, deployment management.
 - `meta.activeDeploymentId`: Track the deployment number currently bound to triggers (must be updated manually post-deploy).
 
 ## External Files
 - `.clasp.json`: Contains `projectId`, `scriptId`, and `rootDir` (not committed).
-- `credentials.json`: OAuth credentials for clasp login (present locally, not in repo).
+- `credentials.json`: Desktop OAuth client for **local** clasp login (`setup:local`); not in repo.
+- `~/.clasprc.json`: **Global** clasp auth for push, pull, deploy (`setup:global`); not in repo.
+- `./.clasprc.json`: **Local** clasp auth for `clasp run` / `npm start`; not in repo.
 
 ## Trigger Configuration (manual)
 - Time-based trigger should target `summarizeAndSendDailyEmail`, scheduled daily (5–6 AM recommended per README).

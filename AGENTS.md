@@ -47,9 +47,12 @@ nvm install && nvm use
 # Install dependencies
 npm install
 
-# Login to Google Apps Script (generates .clasprc.json)
+# Clasp: global (~/.clasprc.json) for push/pull/deploy, then local (./.clasprc.json) for clasp run
 npm run setup
+npm run auth:status
 ```
+
+See `docs/clasp-auth.md` for dual-auth details and troubleshooting (`invalid_grant` usually means stale **global** creds — run `npm run setup:global`).
 
 ### Development Workflow
 ```bash
