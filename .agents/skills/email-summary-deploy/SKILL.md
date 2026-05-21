@@ -2,9 +2,9 @@
 name: email-summary-deploy
 description: >-
   Deploy the email-summary Google Apps Script to production: validate src/config.ts production
-  flags, run clasp deploy, update meta.activeDeploymentId, clean old deployments, and remind the
-  operator to recreate the time trigger. Use when deploying email-summary, running npm run deploy
-  for this project, or updating the active Apps Script deployment.
+  flags, run npm run deploy (tests + redeploy in place + auto-update activeDeploymentVersion),
+  and clean old deployments. Use when deploying email-summary or updating the active Apps Script
+  deployment.
 triggers:
   - 'email-summary-deploy'
   - 'deploy email-summary'
@@ -24,6 +24,7 @@ Run from the **email-summary** repository root (`npm` scripts assume this cwd).
    - `EMAIL_SEARCH_PREVIOUS_DAYS = 1`
    - `EMAIL_SEARCH_RESULT_LIMIT = undefined`
 2. If any value is wrong, fix it in `src/config.ts` before deploying. Do not deploy with debug flags.
+3. Confirm global clasp auth: `npm run auth:status`.
 
 ## Deployment workflow
 
@@ -35,48 +36,45 @@ Execute in order:
    npm run deploy
    ```
 
-   Capture output: Google Apps Script project URL and new deployment ID (numeric, from `clasp deploy`).
+   Runs `npm run test`, then push + redeploy in place. `meta.activeDeploymentVersion` is updated automatically in `package.json`.
 
-2. **Trigger reminder (manual)**
-   Tell the operator to open the Apps Script URL from deploy output and recreate the time-based trigger for `summarizeAndSendDailyEmail`. This step is not automated.
-
-3. **Update deployment tracking**
-   Set `package.json` → `meta.activeDeploymentId` to the new deployment ID from step 1.
-
-4. **Clean up old deployments**
+2. **Clean up old deployments**
 
    ```bash
    npm run deployments:list
    npm run deployments:cleanup
    ```
 
-   Show output from both commands.
+   Show output from both commands. Cleanup keeps the deployment at `activeDeploymentVersion` and `@HEAD`.
 
-5. **Commit (only if asked)**
-   If the user wants the deployment ID tracked in git:
+3. **Commit (only if asked)**
+   If the user wants the version tracked in git:
    ```bash
    git add package.json
-   git commit -m "chore(deploy): update active deployment ID to <DEPLOYMENT_ID>"
+   git commit -m "chore(deploy): update activeDeploymentVersion to <VERSION>"
    ```
    Push only when the user explicitly asks.
+
+## Trigger (one-time, not part of deploy)
+
+The daily trigger is created once in Apps Script UI, bound to `meta.activeDeploymentVersion`. Do not recreate after each deploy. If missing or bound to Head, instruct the operator to set it up per `docs/deployment.md`.
 
 ## Success criteria
 
 - Production config validated in `src/config.ts`
-- `npm run deploy` succeeded
-- `meta.activeDeploymentId` updated
-- Old deployments cleaned up
-- Operator reminded to recreate the time trigger manually
+- `npm run deploy` succeeded (tests passed, redeploy in place, `activeDeploymentVersion` auto-updated)
+- Old deployments cleaned up (when cleanup step run)
 
 ## Error handling
 
-- Config validation fails → fix `src/config.ts`, rebuild if needed, then retry deploy
+- Config validation fails → fix `src/config.ts`, then retry deploy
+- Tests fail → fix locally; deploy does not run
 - Deploy fails → check clasp auth (`npm run auth:status`), `.clasp.json` `rootDir` (`dist/`), and `docs/clasp-auth.md`
-- Cleanup fails → confirm `meta.activeDeploymentId` matches the live deployment before retrying
+- Cleanup fails → confirm `meta.activeDeploymentVersion` matches a live deployment before retrying
 - Git commit fails → report status; do not force-push
 
 ## References
 
 - Manual checklist: `README.md` → Deployment Process
 - Clasp auth: `docs/clasp-auth.md`
-- Post-deploy trigger notes: `docs/deployment.md`, `AGENTS.md`
+- Trigger config: `docs/configuration.md`, `docs/deployment.md`

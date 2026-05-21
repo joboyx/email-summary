@@ -73,15 +73,17 @@ To set up the project, follow these steps:
 
    **Note:** Set `.clasp.json` `rootDir` to `dist/`, not `src/`. Source lives in `src/` as `.ts` files; clasp uploads compiled output from `dist/`.
 
-7. Create a trigger for the script to run daily:
-   - Go to the Apps Script editor
-   - Click on the clock icon on the left sidebar to open the triggers page
-   - Click on `+ Add Trigger`
-   - Select `summarizeAndSendDailyEmail` from the function dropdown
-   - Select `Time-driven` from the `Event source` dropdown
-   - Select `Day timer` from the `Type of time` dropdown
-   - Select `5 to 6am` from the `Time of day` dropdown
-   - Select `Notify me immediately` from the `Failure notification settings` dropdown
+7. Create a trigger for the script to run daily (**one-time setup**):
+
+   `npm run deploy` updates the fixed deployment in place; the trigger does **not** need to be recreated after each deploy. Set it up once:
+
+   - Go to the Apps Script editor → Triggers → **Add Trigger**
+   - Function: `summarizeAndSendDailyEmail`
+   - Deployment: Version `@N` matching `meta.activeDeploymentVersion` in `package.json` (see `npm run deployments:list`)
+   - Event source: Time-driven → Day timer → 5am to 6am
+   - Failure notification: **Notify me immediately**
+
+   Delete any existing Head-bound trigger before creating this one.
 
 ## Usage
 
@@ -129,23 +131,17 @@ After making local changes and testing, follow these steps to deploy to producti
    ```bash
    npm run deploy
    ```
-2. **Update the trigger:**
-   - Copy the Google Apps Script URL from the deploy output
-   - Open the URL and update/recreate the time-based trigger for the new deployment
+   Runs tests, pushes, redeploys in place, and updates `meta.activeDeploymentVersion` automatically.
 
-3. **Update deployment tracking:**
-   - Note the deployment ID from the deploy command output
-   - Update `package.json` → `meta.activeDeploymentId` with the new deployment number
-
-4. **Clean up old deployments:**
+2. **Clean up old deployments (optional):**
 
    ```bash
    npm run deployments:list
    npm run deployments:cleanup
    ```
 
-5. **Commit changes:**
-   Since `package.json` was updated with the new deployment ID, commit and push the changes to track the active deployment.
+3. **Commit (optional):**
+   Commit `package.json` if you want the updated `activeDeploymentVersion` tracked in git.
 
 ### Automated deployment (agent skill)
 

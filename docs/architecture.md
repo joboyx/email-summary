@@ -20,7 +20,8 @@ Apps Script loads all compiled `.js` files in `dist/` into a shared global names
 | `src/gmail-actions.ts` | `sendSummaryEmail`, `archiveThreads`, `addLabels`, `getOrCreateLabel`, `explainEmail`, `labelCache`           |
 | `src/types.d.ts`       | Shared interfaces for email and OpenRouter data contracts                                                     |
 | `src/appsscript.json`  | Time zone (Asia/Manila), OAuth scopes, advanced Gmail API (copied to `dist/` on build)                        |
-| `package.json`         | Node environment metadata plus `clasp` automation scripts and deployment tracking (`meta.activeDeploymentId`) |
+| `package.json`         | Node metadata, clasp scripts, `meta.activeDeploymentVersion` (auto-updated on deploy) |
+| `scripts/clasp-deployment.mjs` | Resolve clasp ID from version, redeploy in place, cleanup stale deployments |
 | `credentials.json`     | OAuth credentials for clasp (not tracked in git)                                                              |
 
 ## Data Flow

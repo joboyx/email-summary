@@ -86,7 +86,7 @@ npm start
 # Local verification: lint with zero warnings, type coverage, Jest (TypeScript tests), and build
 npm test
 
-# Deploy to Google Apps Script
+# Deploy to Google Apps Script (runs npm test, redeploys in place, auto-updates activeDeploymentVersion)
 npm run deploy
 
 # Watch logs in terminal
@@ -102,7 +102,7 @@ npm run watch:open
 # List all deployments
 npm run deployments:list
 
-# Clean up old deployments (keeps active and HEAD)
+# Clean up old deployments (keeps activeDeploymentVersion + HEAD)
 npm run deployments:cleanup
 ```
 
@@ -182,19 +182,20 @@ The script sends structured prompts to OpenRouter with:
 
 ### Time-based Trigger
 
-Set up in Google Apps Script console:
+One-time UI setup in Apps Script → Triggers, bound to `meta.activeDeploymentVersion`:
 
-1. Function: `summarizeAndSendDailyEmail`
-2. Event source: Time-driven
-3. Type: Day timer
-4. Time: 5-6 AM (recommended)
-5. Error Notification: `Notify me immediately`
+| Setting | Value |
+|---------|-------|
+| Function | `summarizeAndSendDailyEmail` |
+| Deployment | Version `@N` (`meta.activeDeploymentVersion`), not Head |
+| Schedule | Time-driven → Day timer → 5–6 AM (`Asia/Manila`) |
+| Failure notification | Notify me immediately (UI-only) |
 
-Recreate this trigger after every deploy so it points at the latest deployment version. Trigger automation is not implemented yet.
+`npm run deploy` runs tests then redeploys in place; `activeDeploymentVersion` is updated automatically.
 
 ### Deployment Tracking
 
-- `package.json` includes `meta.activeDeploymentId` for deployment management
+- `package.json` includes `meta.activeDeploymentVersion` for deployment management
 - Deployment scripts handle versioning and cleanup
 
 ## Development Notes

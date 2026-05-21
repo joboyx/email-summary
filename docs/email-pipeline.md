@@ -3,7 +3,7 @@
 ## 1. Trigger & Entry
 
 - **Function**: `summarizeAndSendDailyEmail`
-- **Invocation**: Manual run (`npm start` / clasp run) or time-based trigger configured in Apps Script UI.
+- **Invocation**: Manual run (`npm start` / clasp run) or time-based UI trigger bound to `meta.activeDeploymentVersion`.
 - **Guardrails**: Wraps the entire flow in `try/catch`, logging errors and returning a status object.
 
 ## 2. Message Discovery (`getPreviousDayEmails`)

@@ -36,7 +36,7 @@
 - `@google/clasp` pinned at `^2.4.2`.
 - `setup` / `setup:global` / `setup:local` / `auth:status`: clasp authentication (see [clasp-auth.md](clasp-auth.md)).
 - Scripts for deploy, testing, log streaming, deployment management.
-- `meta.activeDeploymentId`: Track the deployment number currently bound to triggers (must be updated manually post-deploy).
+- `meta.activeDeploymentVersion`: Deployment version (`@N`). UI trigger binds to this; auto-updated by `npm run deploy`.
 
 ## External Files
 
@@ -45,8 +45,17 @@
 - `~/.clasprc.json`: **Global** clasp auth for push, pull, deploy (`setup:global`); not in repo.
 - `./.clasprc.json`: **Local** clasp auth for `clasp run` / `npm start`; not in repo.
 
-## Trigger Configuration (manual)
+## Trigger Configuration (one-time UI setup)
 
-- Time-based trigger should target `summarizeAndSendDailyEmail`, scheduled daily (5–6 AM recommended per README).
-- Recreate the time-based trigger after every deploy so it points at the latest deployment version; this is still a manual post-deploy step.
-- Failure notifications set to "Notify me immediately".
+The daily trigger must be created once in the Apps Script UI, bound to `meta.activeDeploymentVersion`. Routine deploys update that deployment in place; `npm run deploy` auto-updates the version in `package.json`.
+
+| Setting | Value |
+|---------|-------|
+| Function | `summarizeAndSendDailyEmail` |
+| Deployment | `meta.activeDeploymentVersion` (e.g. Version 77), not Head |
+| Event source | Time-driven |
+| Type | Day timer |
+| Time of day | 5am to 6am (GMT+08:00 / `Asia/Manila`) |
+| Failure notification | **Notify me immediately** (UI-only; no API equivalent) |
+
+`ScriptApp.newTrigger()` cannot bind to a versioned deployment or set failure notifications; do not use programmatic trigger install for production.
