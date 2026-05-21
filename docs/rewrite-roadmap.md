@@ -5,7 +5,7 @@
 - ~~Single-file script (`Code.js`) mixes orchestration, API integration, and presentation logic.~~ **Addressed (JBY-023)**: code split into `src/` modules.
 - Tight coupling to LLM response format (string parsing) increases fragility.
 - Lack of automated tests or mocks makes regression detection difficult.
-- Manual deployment and trigger management steps are error-prone.
+- Manual deployment and trigger management steps are error-prone. **Partially addressed (JBY-023)**: `npm run deploy` runs tests, redeploys in place, auto-updates `activeDeploymentVersion`; one-time UI trigger still required.
 
 ## Goals
 
@@ -31,7 +31,9 @@
    - Implement error retries/backoff and better logging/monitoring.
    - Provide CLI or UI to manage categories, labels, and thresholds.
 4. **Deployment & Ops**
-   - Automate trigger updates, integrate with CI for clasp push/deploy.
+   - ~~Automate redeploy and version tracking~~ **Done (JBY-023)** — `scripts/clasp-deployment.mjs`, `npm run deploy` = test + push + redeploy-in-place + auto `activeDeploymentVersion`.
+   - One-time UI trigger for versioned deployment + failure notifications (not scriptable).
+   - Integrate with CI for clasp push/deploy. **Deferred**
    - Add health checks and notification when summaries fail.
 
 ## Open Questions
