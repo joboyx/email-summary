@@ -4,7 +4,7 @@
 - Node.js version from `.nvmrc` (install via `nvm install && nvm use`).
 - `@google/clasp` dev dependency installed (`npm install`).
 - Google OAuth credentials stored at `credentials.json` (downloaded from Google Cloud console).
-- `.clasp.json` configured with correct `projectId`, `scriptId`, and `rootDir`.
+- `.clasp.json` configured with correct `projectId`, `scriptId`, and `rootDir` (must point at `src/`).
 - Script property `OPENROUTER_API_KEY` set in the Apps Script project settings (remove legacy `OPENAI_API_KEY` after migration).
 
 ## Initial Setup

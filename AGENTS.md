@@ -17,10 +17,21 @@ This is a Google Apps Script that automatically summarizes daily emails using Op
 ## Key Components
 
 ### Core Architecture
-- **Single File Structure**: All code is contained in `Code.js` for simplicity
-- **Configuration-driven**: Debug flags at the top of the file control behavior
+- **Modular source layout**: Apps Script source lives under `src/`; clasp `rootDir` points at that directory
+- **Configuration-driven**: Debug flags at the top of `src/config.js` control behavior
 - **AI-powered Categorization**: Uses OpenRouter to categorize and summarize emails
 - **Gmail Integration**: Uses Gmail API for email processing, archiving, and labeling
+
+### Module Map (`src/`)
+| File | Responsibility |
+|------|----------------|
+| `config.js` | Side-effect flags, search limits, categories, OpenRouter constants |
+| `gmail-search.js` | Gmail search string builder and message retrieval |
+| `openrouter.js` | OpenRouter API client and summarization prompt/parse logic |
+| `html-format.js` | Digest HTML builder and category legend |
+| `gmail-actions.js` | Send digest, archive threads, labels, label cache |
+| `main.js` | Entry point: `summarizeAndSendDailyEmail` orchestration |
+| `appsscript.json` | Apps Script manifest (timezone, scopes, runtime) |
 
 ### Email Processing Pipeline
 1. **Email Retrieval**: Searches inbox for emails from the last N days
@@ -30,7 +41,7 @@ This is a Google Apps Script that automatically summarizes daily emails using Op
 5. **Post-processing**: Archives threads and adds labels based on rules
 
 ### Configuration Constants
-Key configuration variables at the top of `Code.js`:
+Key configuration variables at the top of `src/config.js`:
 - `EMAIL_SEND_ENABLED`: Controls email sending (set to `false` for testing)
 - `EMAIL_ARCHIVE_ENABLED`: Controls automatic archiving
 - `EMAIL_LABEL_ENABLED`: Controls label management
@@ -88,7 +99,7 @@ npm run deployments:cleanup
 {
   "projectId": "your-google-cloud-project-id",
   "scriptId": "your-apps-script-id",
-  "rootDir": "path-to-project"
+  "rootDir": "path-to-project/src"
 }
 ```
 
@@ -174,5 +185,5 @@ Set up in Google Apps Script console:
 - Batch processing of emails in single execution
 
 ## Time Zone Configuration
-- Configured for Asia/Manila timezone in `appsscript.json`
+- Configured for Asia/Manila timezone in `src/appsscript.json`
 - Date formatting uses ISO strings for consistency

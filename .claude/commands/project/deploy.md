@@ -8,7 +8,7 @@ This command automates the complete deployment process for the Google Apps Scrip
 
 ## Pre-deployment Actions
 
-1. **Validate production configuration in Code.js:**
+1. **Validate production configuration in `src/config.js`:**
    - Verify `EMAIL_SEND_ENABLED = true`
    - Verify `EMAIL_ARCHIVE_ENABLED = true`
    - Verify `EMAIL_LABEL_ENABLED = true`
@@ -62,7 +62,7 @@ Execute the following steps in sequence:
 
 ## Error Handling
 
-- If configuration validation fails, fix the values in Code.js before proceeding
+- If configuration validation fails, fix the values in `src/config.js` before proceeding
 - If deployment fails, check clasp authentication and project configuration
 - If git operations fail, ensure working directory is clean and repository is accessible
 

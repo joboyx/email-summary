@@ -31,7 +31,7 @@ To set up the project, follow these steps:
      {
        "projectId": "emailsummary-438014",
        "scriptId": "18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0",
-       "rootDir": "~/workspace/email-summary"
+       "rootDir": "~/workspace/email-summary/src"
      }
      ```
 
@@ -112,7 +112,7 @@ npm run watch:open
 After making local changes and testing, follow these steps to deploy to production:
 
 ### Pre-deployment Checklist
-- Ensure all debug configuration values in `Code.js` are set to their default production values:
+- Ensure all debug configuration values in `src/config.js` are set to their default production values:
   - `EMAIL_SEND_ENABLED = true`
   - `EMAIL_ARCHIVE_ENABLED = true` 
   - `EMAIL_LABEL_ENABLED = true`

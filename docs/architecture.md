@@ -1,23 +1,24 @@
 # Architecture
 
 ## Runtime Context
-- **Platform**: Google Apps Script, V8 runtime (`appsscript.json`).
-- **Deployment tooling**: `clasp` CLI (see `package.json` scripts).
+- **Platform**: Google Apps Script, V8 runtime (`src/appsscript.json`).
+- **Deployment tooling**: `clasp` CLI (see `package.json` scripts); `rootDir` in `.clasp.json` points at `src/`.
 - **Hosting**: Bound to the user's Google account; execution scoped to the owner's Gmail data.
 
 ## Components
-- `Code.js`: Single script file containing all logic.
-  - **Entry point**: `summarizeAndSendDailyEmail` orchestrates the workflow.
-  - **Helpers**:
-    - `getSearchStringForLastNDays` builds Gmail search queries.
-    - `getPreviousDayEmails` pulls and normalizes Gmail messages.
-    - `summarizeEmails` invokes OpenRouter and parses responses.
-    - `formatSummariesAsHTML` builds the digest email body.
-    - `sendSummaryEmail`, `archiveThreads`, `addLabels` apply email actions.
-    - `getOrCreateLabel`, `explainEmail` support label management and logging.
-- `appsscript.json`: Configures time zone (Asia/Manila), OAuth scopes, and advanced Gmail API enabling.
-- `package.json`: Node environment metadata plus `clasp` automation scripts and deployment tracking (`meta.activeDeploymentId`).
-- `credentials.json`: OAuth credentials for clasp (not tracked in git).
+Apps Script loads all `.js` files in `src/` into a shared global namespace (no ES modules).
+
+| Module | Key symbols |
+|--------|-------------|
+| `src/main.js` | **Entry point**: `summarizeAndSendDailyEmail` orchestrates the workflow |
+| `src/config.js` | `EMAIL_*` flags, `EMAIL_CATEGORIES`, `OPENROUTER_*` constants |
+| `src/gmail-search.js` | `getSearchStringForLastNDays`, `getPreviousDayEmails` |
+| `src/openrouter.js` | `fetchOpenRouterChatCompletion`, `summarizeEmails` |
+| `src/html-format.js` | `formatSummariesAsHTML` |
+| `src/gmail-actions.js` | `sendSummaryEmail`, `archiveThreads`, `addLabels`, `getOrCreateLabel`, `explainEmail`, `labelCache` |
+| `src/appsscript.json` | Time zone (Asia/Manila), OAuth scopes, advanced Gmail API |
+| `package.json` | Node environment metadata plus `clasp` automation scripts and deployment tracking (`meta.activeDeploymentId`) |
+| `credentials.json` | OAuth credentials for clasp (not tracked in git) |
 
 ## Data Flow
 1. **Input**: Gmail threads returned by `GmailApp.search` using the timestamp filter from `getSearchStringForLastNDays`.
