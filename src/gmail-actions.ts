@@ -41,7 +41,7 @@ function addLabels(emails: EmailSummary[]): void {
 
   for (const email of emails) {
     const thread = GmailApp.getThreadById(email.threadId);
-    const hasActionItem = email.actionItem && email.actionItem.toLowerCase() !== "none";
+    const hasActionItem = email.actionItem && email.actionItem.toLowerCase() !== 'none';
     if (hasActionItem) {
       thread.addLabel(getOrCreateLabel(EMAIL_LABEL_ACTION_REQUIRED));
       console.log(`Added label: ${EMAIL_LABEL_ACTION_REQUIRED} to email: ${explainEmail(email)}`);
@@ -57,22 +57,22 @@ const labelCache: Record<string, GoogleAppsScript.Gmail.GmailLabel> = {};
  */
 function getOrCreateLabel(labelName: string): GoogleAppsScript.Gmail.GmailLabel {
   if (labelCache[labelName]) {
-    console.log("Label found in cache: " + labelName);
+    console.log('Label found in cache: ' + labelName);
     return labelCache[labelName];
   }
 
-  const labelParts = labelName.split("/");
-  let currentLabelPath = "";
+  const labelParts = labelName.split('/');
+  let currentLabelPath = '';
 
   for (const part of labelParts) {
     currentLabelPath = currentLabelPath ? `${currentLabelPath}/${part}` : part;
     let label = GmailApp.getUserLabelByName(currentLabelPath);
 
     if (!label) {
-      console.log("Label not found. Creating: " + currentLabelPath);
+      console.log('Label not found. Creating: ' + currentLabelPath);
       label = GmailApp.createLabel(currentLabelPath);
     } else {
-      console.log("Label exists: " + label.getName());
+      console.log('Label exists: ' + label.getName());
     }
 
     labelCache[currentLabelPath] = label;

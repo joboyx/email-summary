@@ -22,7 +22,7 @@ function formatSummariesAsHTML(summaries: EmailSummary[]): string {
                 <div style='color: #666; font-size: 15px; margin-bottom: 4px;'><strong>Subject:</strong> ${summary.subject}</div>
                 <div style='color: #666; font-size: 15px;'><strong>From:</strong> ${summary.from} | <strong>Category:</strong> ${summary.category}</div>`;
 
-    if (summary.actionItem && summary.actionItem.toLowerCase() !== "none") {
+    if (summary.actionItem && summary.actionItem.toLowerCase() !== 'none') {
       html += `<div style='background: #fff3cd; padding: 8px; border-radius: 4px; margin-top: 8px;'>
                 <span style='font-size: 18px;'>⚠️</span> ${summary.actionItem}
               </div>`;

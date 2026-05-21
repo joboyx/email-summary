@@ -9,13 +9,13 @@ function fetchOpenRouterChatCompletion(
   payload: OpenRouterChatCompletionRequest,
 ): OpenRouterChatCompletionResponse {
   const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
-    method: "post",
-    contentType: "application/json",
+    method: 'post',
+    contentType: 'application/json',
     muteHttpExceptions: true,
     headers: {
       Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-      "HTTP-Referer": "https://script.google.com",
-      "X-Title": "email-summary",
+      'HTTP-Referer': 'https://script.google.com',
+      'X-Title': 'email-summary',
     },
     payload: JSON.stringify(payload),
   };
@@ -42,7 +42,7 @@ function fetchOpenRouterChatCompletion(
       throw lastError;
     }
 
-    console.log("llm: ", JSON.stringify(json, undefined, 2));
+    console.log('llm: ', JSON.stringify(json, undefined, 2));
 
     const isRateLimited = status === 429 || json.error?.code === 429;
 
@@ -71,13 +71,13 @@ function fetchOpenRouterChatCompletion(
     }
 
     if (!json.choices?.[0]?.message?.content) {
-      throw new Error("OpenRouter response missing choices[0].message.content");
+      throw new Error('OpenRouter response missing choices[0].message.content');
     }
 
     return json;
   }
 
-  throw lastError || new Error("OpenRouter request failed after retries");
+  throw lastError || new Error('OpenRouter request failed after retries');
 }
 
 function parseSummaryLine(lines: string[], prefix: string): string {
@@ -93,7 +93,7 @@ function summarizeEmails(emails: EmailInput[]): EmailSummary[] {
 
   if (!OPENROUTER_API_KEY) {
     throw new Error(
-      "OPENROUTER_API_KEY script property is not set. Add it in Apps Script > Project Settings > Script properties.",
+      'OPENROUTER_API_KEY script property is not set. Add it in Apps Script > Project Settings > Script properties.',
     );
   }
 
@@ -101,13 +101,13 @@ function summarizeEmails(emails: EmailInput[]): EmailSummary[] {
     const categoryList = EMAIL_CATEGORIES.map(
       (cat) =>
         `  - name: ${cat.name}\n    emoji: ${cat.emoji}\n    description: ${cat.description}`,
-    ).join("\n");
+    ).join('\n');
 
     const payload: OpenRouterChatCompletionRequest = {
       model: OPENROUTER_MODEL,
       messages: [
         {
-          role: "user",
+          role: 'user',
           content: `
             Summarize the following email, categorize it, and determine if there's any action item for the recipient:
               subject: ${email.subject}
@@ -142,27 +142,27 @@ function summarizeEmails(emails: EmailInput[]): EmailSummary[] {
         },
       ],
       max_completion_tokens: OPENROUTER_MAX_TOKENS,
-      reasoning: { effort: "low", exclude: true },
+      reasoning: { effort: 'low', exclude: true },
     };
 
     try {
       const json = fetchOpenRouterChatCompletion(payload);
-      const summaryText = json.choices![0].message!.content!.split("\n");
+      const summaryText = json.choices![0].message!.content!.split('\n');
 
       const summary: EmailSummary = {
         ...email,
-        summary: parseSummaryLine(summaryText, "summary:"),
-        category: parseSummaryLine(summaryText, "category:"),
-        actionItem: parseSummaryLine(summaryText, "actionItem:"),
+        summary: parseSummaryLine(summaryText, 'summary:'),
+        category: parseSummaryLine(summaryText, 'category:'),
+        actionItem: parseSummaryLine(summaryText, 'actionItem:'),
       };
 
-      const emoji = summary.summary.split(" ")[0];
+      const emoji = summary.summary.split(' ')[0];
       const validEmojis = EMAIL_CATEGORIES.map((cat) => cat.emoji);
       if (!validEmojis.includes(emoji)) {
         console.warn(
-          `Invalid emoji detected in summary: ${summary.summary}. Expected one of: ${validEmojis.join(", ")}`,
+          `Invalid emoji detected in summary: ${summary.summary}. Expected one of: ${validEmojis.join(', ')}`,
         );
-        summary.summary = "⚠️ Invalid emoji detected. Please review.";
+        summary.summary = '⚠️ Invalid emoji detected. Please review.';
       }
 
       summaries.push(summary);
@@ -181,7 +181,7 @@ function summarizeEmails(emails: EmailInput[]): EmailSummary[] {
     return categoryComparison;
   });
 
-  console.log("summaries: ", JSON.stringify(summaries, undefined, 2));
+  console.log('summaries: ', JSON.stringify(summaries, undefined, 2));
 
   return summaries;
 }
