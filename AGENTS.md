@@ -83,7 +83,7 @@ npm run build
 # Run the main function directly (builds first)
 npm start
 
-# Local verification: lint with zero warnings, Jest (TypeScript tests), and build
+# Local verification: lint with zero warnings, type coverage, Jest (TypeScript tests), and build
 npm test
 
 # Deploy to Google Apps Script

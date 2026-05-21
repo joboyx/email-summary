@@ -14,7 +14,8 @@
     "setup:local": "clasp login --creds credentials.json",
     "auth:status": "clasp login --status",
     "start": "npm run build && clasp run summarizeAndSendDailyEmail",
-    "test": "npm run lint && jest && npm run build",
+    "test": "npm run lint && npm run type-coverage && jest && npm run build",
+    "type-coverage": "type-coverage --project tsconfig.json --at-least 100",
     "watch": "clasp logs --watch",
     "watch:open": "clasp logs --open",
     "deploy": "npm run build && clasp push --force && clasp deploy && echo 'Deployed successfully! Delete the old trigger and create a new one with this new version.' && echo 'https://script.google.com/home/projects/18591sxMWX_gcdwUgzcfiQcjzKhZGxWj1WPJPHrznwuhMNZDQbK7HaEz0/edit'",
@@ -42,6 +43,7 @@
     "lint-staged": "^17.0.5",
     "prettier": "^3.8.3",
     "ts-jest": "^29.4.11",
+    "type-coverage": "^2.29.7",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.59.4"
   }

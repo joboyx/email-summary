@@ -91,7 +91,7 @@ To run the script and send the daily email summary, use the following command:
 npm start
 ```
 
-To run local verification (lint with zero warnings, Jest tests in `test/`, and build), use:
+To run local verification (lint with zero warnings, type coverage, Jest tests in `test/`, and build), use:
 
 ```bash
 npm test
