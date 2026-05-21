@@ -16,7 +16,18 @@ const SOURCE_ORDER = [
 let loaded = false;
 let sandbox: vm.Context;
 
+/** Keep the VM sandbox on Jest's Date (including fake timers). */
+function syncSandboxDate(target: vm.Context): void {
+  Object.defineProperty(target, 'Date', {
+    value: Date,
+    writable: true,
+    configurable: true,
+    enumerable: true,
+  });
+}
+
 export function gas(): GasTestGlobals {
+  syncSandboxDate(sandbox);
   return sandbox as unknown as GasTestGlobals;
 }
 
@@ -34,6 +45,7 @@ export function runInFreshSandbox<T>(customize: (mocks: GasTestMocks) => void, f
   customize(mocks);
 
   const isolatedSandbox = vm.createContext({ ...global });
+  syncSandboxDate(isolatedSandbox);
   installGasMocks(mocks, isolatedSandbox as unknown as typeof globalThis);
 
   for (const file of SOURCE_ORDER) {
