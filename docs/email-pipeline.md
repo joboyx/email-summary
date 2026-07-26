@@ -16,7 +16,7 @@
 ## 3. Summarization (`summarizeEmails`)
 
 - Constructs OpenRouter Chat Completions payload with:
-  - Model `~openai/gpt-latest`, `max_completion_tokens` = 500,000, `reasoning: { effort: "low", exclude: true }`.
+  - Model `x-ai/grok-4.5`, `max_completion_tokens` = 250,000, `reasoning: { effort: "low", exclude: true }`.
   - Single user message containing email metadata and YAML-formatted category list.
   - Behavioral guidelines emphasizing new content and action item threshold.
 - Sends POST via `UrlFetchApp.fetch` with Bearer token from `OPENROUTER_API_KEY` script property and OpenRouter attribution headers.

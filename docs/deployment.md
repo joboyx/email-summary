@@ -55,8 +55,14 @@ Requires **global** clasp auth only (`npm run setup:global`).
 ## Testing the Deployment
 
 ```bash
-npm start  # run summarizeAndSendDailyEmail via clasp run
+# Push local dist/ to Apps Script HEAD, then run once (safe for debug flags in config.ts)
+npm run start:push
+
+# Run only (uses whatever is already on Apps Script HEAD)
+npm start
 ```
+
+`start:push` updates **HEAD** only — it does **not** redeploy the versioned deployment bound to the daily trigger. Use `npm run deploy` when ready to promote production settings.
 
 `npm test` is local-only verification: lint with zero warnings, type coverage on `src/`, Jest tests in `test/`, and the TypeScript build.
 
