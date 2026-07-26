@@ -11,7 +11,7 @@
 - `EMAIL_CATEGORIES_SKIPPED_FOR_ARCHIVE` (`["personal"]`): Categories exempted from archiving.
 - `EMAIL_LABEL_ROOT` (`"🤖 EmailSummary"`): Root label name for auto-created labels.
 - `EMAIL_LABEL_ACTION_REQUIRED` (derived): Full label applied when action items exist.
-- `OPENROUTER_MODEL` (`"~openai/gpt-latest"`), `OPENAI_MAX_TOKENS` (`500_000`): Model alias and completion token budget for chat completions.
+- `OPENROUTER_MODEL` (`"x-ai/grok-4.5"`), `OPENROUTER_MAX_TOKENS` (`250_000`): Model and completion token budget for chat completions. Reasoning effort is `low`.
 
 ## Script Properties
 
@@ -49,13 +49,13 @@
 
 The daily trigger must be created once in the Apps Script UI, bound to `meta.activeDeploymentVersion`. Routine deploys update that deployment in place; `npm run deploy` auto-updates the version in `package.json`.
 
-| Setting | Value |
-|---------|-------|
-| Function | `summarizeAndSendDailyEmail` |
-| Deployment | `meta.activeDeploymentVersion` (e.g. Version 77), not Head |
-| Event source | Time-driven |
-| Type | Day timer |
-| Time of day | 5am to 6am (GMT+08:00 / `Asia/Manila`) |
-| Failure notification | **Notify me immediately** (UI-only; no API equivalent) |
+| Setting              | Value                                                      |
+| -------------------- | ---------------------------------------------------------- |
+| Function             | `summarizeAndSendDailyEmail`                               |
+| Deployment           | `meta.activeDeploymentVersion` (e.g. Version 77), not Head |
+| Event source         | Time-driven                                                |
+| Type                 | Day timer                                                  |
+| Time of day          | 5am to 6am (GMT+08:00 / `Asia/Manila`)                     |
+| Failure notification | **Notify me immediately** (UI-only; no API equivalent)     |
 
 `ScriptApp.newTrigger()` cannot bind to a versioned deployment or set failure notifications; do not use programmatic trigger install for production.
