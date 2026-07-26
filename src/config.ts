@@ -21,8 +21,8 @@ const EMAIL_LABEL_ACTION_REQUIRED = `${EMAIL_LABEL_ROOT}/⚠️ ActionRequired`;
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const OPENROUTER_API_KEY =
   PropertiesService.getScriptProperties().getProperty('OPENROUTER_API_KEY');
-const OPENROUTER_MODEL = '~openai/gpt-latest';
-const OPENROUTER_MAX_TOKENS = 500000;
+const OPENROUTER_MODEL = 'x-ai/grok-4.5';
+const OPENROUTER_MAX_TOKENS = 250000;
 const OPENROUTER_MAX_RETRIES = 3;
 const OPENROUTER_RETRY_DELAY_MS = 2000;
 

@@ -10,7 +10,7 @@ This is a Google Apps Script that automatically summarizes daily emails using Op
 
 - **Runtime**: Google Apps Script (V8 runtime) ⚙️
 - **Language**: TypeScript (compiled to JavaScript for Apps Script)
-- **APIs**: Gmail API, OpenRouter API (`~openai/gpt-latest`), Google Script Services
+- **APIs**: Gmail API, OpenRouter API (`x-ai/grok-4.5`, low reasoning), Google Script Services
 - **Deployment**: Google clasp CLI tool
 - **Node Version**: v22 (see `.nvmrc`)
 
@@ -80,8 +80,11 @@ See `docs/clasp-auth.md` for dual-auth details and troubleshooting (`invalid_gra
 # Compile TypeScript to dist/
 npm run build
 
-# Run the main function directly (builds first)
+# Run the main function directly (builds first; uses already-pushed Apps Script HEAD)
 npm start
+
+# Push local changes to Apps Script HEAD, then run summarizeAndSendDailyEmail once
+npm run start:push
 
 # Local verification: lint with zero warnings, type coverage, Jest (TypeScript tests), and build
 npm test
@@ -126,7 +129,7 @@ OAuth 2.0 credentials file from Google Cloud Console for desktop application.
 
 Set in Google Apps Script > Settings > Script properties:
 
-- `OPENROUTER_API_KEY`: Your OpenRouter API key for GPT access via `~openai/gpt-latest`
+- `OPENROUTER_API_KEY`: Your OpenRouter API key for Grok 4.5 (`x-ai/grok-4.5`) access
 
 ## Email Categories System
 
@@ -184,12 +187,12 @@ The script sends structured prompts to OpenRouter with:
 
 One-time UI setup in Apps Script → Triggers, bound to `meta.activeDeploymentVersion`:
 
-| Setting | Value |
-|---------|-------|
-| Function | `summarizeAndSendDailyEmail` |
-| Deployment | Version `@N` (`meta.activeDeploymentVersion`), not Head |
-| Schedule | Time-driven → Day timer → 5–6 AM (`Asia/Manila`) |
-| Failure notification | Notify me immediately (UI-only) |
+| Setting              | Value                                                   |
+| -------------------- | ------------------------------------------------------- |
+| Function             | `summarizeAndSendDailyEmail`                            |
+| Deployment           | Version `@N` (`meta.activeDeploymentVersion`), not Head |
+| Schedule             | Time-driven → Day timer → 5–6 AM (`Asia/Manila`)        |
+| Failure notification | Notify me immediately (UI-only)                         |
 
 `npm run deploy` runs tests then redeploys in place; `activeDeploymentVersion` is updated automatically.
 
