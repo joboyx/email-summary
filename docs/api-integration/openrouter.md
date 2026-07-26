@@ -9,22 +9,21 @@
 
 ## Model
 
-- Model alias: `~openai/gpt-latest`
-- OpenRouter redirects this alias to the latest model in the OpenAI GPT family without code changes when OpenAI releases new models.
-- Pricing and behavior may change when the alias target changes; monitor OpenRouter usage dashboards after major GPT releases.
+- Model: `x-ai/grok-4.5` (Grok 4.5 with low reasoning effort)
+- Pricing and behavior are tied to xAI’s Grok 4.5 rates on OpenRouter; monitor usage after model or pricing changes.
 
 ## Request Structure
 
 ```json
 {
-  "model": "~openai/gpt-latest",
+  "model": "x-ai/grok-4.5",
   "messages": [
     {
       "role": "user",
       "content": "... see prompt template ..."
     }
   ],
-  "max_completion_tokens": 500000,
+  "max_completion_tokens": 250000,
   "reasoning": {
     "effort": "low",
     "exclude": true
@@ -58,7 +57,7 @@
 ## Token Management
 
 - `EMAIL_MAX_CONTENT_LENGTH` (`1_000_000`) controls message body size prior to API call.
-- `OPENROUTER_MAX_TOKENS` (`500_000`) caps completion size via `max_completion_tokens`.
+- `OPENROUTER_MAX_TOKENS` (`250_000`) caps completion size via `max_completion_tokens`. Keep this well under the model context window so input + output does not exceed Grok 4.5’s 500k limit.
 
 ## Migration from OpenAI Direct
 

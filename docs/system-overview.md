@@ -17,7 +17,7 @@ This Google Apps Script project assembles a daily digest of recent Gmail message
 
 - **Primary user**: Gmail account owner receiving the digest email.
 - **Maintainers**: Developers managing the Apps Script and associated deployment scripts.
-- **External services**: OpenRouter (OpenAI-compatible chat completions via `~openai/gpt-latest`) and Gmail services invoked through Apps Script.
+- **External services**: OpenRouter (OpenAI-compatible chat completions via `x-ai/grok-4.5`) and Gmail services invoked through Apps Script.
 
 ## High-Level Flow
 

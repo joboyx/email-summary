@@ -8,6 +8,7 @@
 - Refactored monolithic `Code.js` into modular `src/` layout (config, Gmail search, OpenRouter, HTML format, Gmail actions, main entry).
 - Moved `appsscript.json` alongside source files (copied to `dist/` on build).
 - Migrated LLM integration from direct OpenAI API to OpenRouter (`~openai/gpt-latest`, low reasoning effort).
+- Switched OpenRouter model to `x-ai/grok-4.5` with low reasoning effort.
 - Renamed script property to `OPENROUTER_API_KEY`; updated docs across architecture, configuration, deployment, operations, API integrations, and troubleshooting.
 
 ## 1.0.0

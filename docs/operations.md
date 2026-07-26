@@ -16,7 +16,7 @@
 ## Quotas & Limits
 
 - **Apps Script**: Execution time per trigger, Gmail daily send quota, Gmail read/modify API limits.
-- **OpenRouter**: Token throughput and rate limits; request is sized for individual emails, so throughput depends on inbox volume. The `~openai/gpt-latest` alias target may change without a code deploy—review usage after major GPT releases.
+- **OpenRouter**: Token throughput and rate limits; request is sized for individual emails, so throughput depends on inbox volume. Low reasoning on `x-ai/grok-4.5` keeps per-email cost down—watch usage after volume spikes.
 
 ## Maintenance Tasks
 

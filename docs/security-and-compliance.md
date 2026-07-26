@@ -2,7 +2,7 @@
 
 ## Data Handling
 
-- Processes Gmail message metadata and plain text bodies. Content is transmitted to OpenRouter for summarization (routed to OpenAI GPT models via the `~openai/gpt-latest` alias).
+- Processes Gmail message metadata and plain text bodies. Content is transmitted to OpenRouter for summarization (routed to xAI Grok 4.5 via `x-ai/grok-4.5`).
 - Truncates content at `EMAIL_MAX_CONTENT_LENGTH` but otherwise passes email text verbatim to OpenRouter. Treat as sharing email data with a third party.
 - Digest email is sent back to the same Gmail account; no external recipients.
 

@@ -14,6 +14,7 @@
     "setup:local": "clasp login --creds credentials.json",
     "auth:status": "clasp login --status",
     "start": "npm run build && clasp run summarizeAndSendDailyEmail",
+    "start:push": "npm run build && clasp push --force && clasp run summarizeAndSendDailyEmail",
     "test": "npm run lint && npm run type-coverage && npm run test:unit && npm run build",
     "test:unit": "node scripts/build-test-bundle.mjs && jest --coverage",
     "test:unit:watch": "node scripts/build-test-bundle.mjs && jest --watch",
@@ -26,7 +27,7 @@
   },
   "meta": {
     "_activeDeploymentVersion": "Apps Script deployment version (@N). UI trigger binds to this; auto-updated by npm run deploy.",
-    "activeDeploymentVersion": 81
+    "activeDeploymentVersion": 82
   },
   "author": "",
   "license": "UNLICENSED",
